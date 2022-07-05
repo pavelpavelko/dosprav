@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "719225380662",
+    "project_id": "do-sprav-flutter-app",
+    "storage_bucket": "do-sprav-flutter-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719225380662:android:0b9652a2bbf2de97d59d97",
+        "android_client_info": {
+          "package_name": "p.pavelko.job.dosprav"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719225380662-gogu0vskc83avkd419afvkc99o1uu9m9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7EmOc5mWd544HCmN9WQ_jTYwJHZYH46M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719225380662-gogu0vskc83avkd419afvkc99o1uu9m9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "719225380662-04qs3tmiok47levcc7cqdanudi5iiop1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dosprav"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

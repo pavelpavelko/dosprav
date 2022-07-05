@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'screens/auth_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 
-void main() {
+import 'screens/auth_screen.dart';
+import 'screens/dashboard_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -29,9 +38,16 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
-      body: AuthScreen(),
-      );
+    return Scaffold(
+      body: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, userSnapshot) {
+            if (userSnapshot.hasData) {
+              return DashboardScreen();
+            } else {
+              return AuthScreen();
+            }
+          }),
+    );
   }
 }
-

@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({Key? key}) : super(key: key);
+  AuthForm({Key? key, required this.isLoading, required this.onFormSubmit})
+      : super(key: key);
 
   @override
   AuthFormState createState() => AuthFormState();
+
+  final bool isLoading;
+
+  final void Function(
+    String email,
+    String password,
+    String username,
+    BuildContext context,
+    AuthState authState,
+  ) onFormSubmit;
 }
 
 enum AuthState {
@@ -135,6 +146,14 @@ class AuthFormState extends State<AuthForm> {
       return;
     }
     _formKey.currentState?.save();
+
+    widget.onFormSubmit(
+      _email,
+      _password,
+      _username,
+      context,
+      _authState,
+    );
   }
 
   bool _isEmailValid(String email) {
@@ -271,58 +290,72 @@ class AuthFormState extends State<AuthForm> {
                     SizedBox(
                       height: 30,
                     ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _saveForm();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.orange,
-                            textStyle: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                        child: Text(_authState == AuthState.signUp
-                            ? "SIGN UP"
-                            : "SIGN IN"),
+                    if (widget.isLoading)
+                      Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Column(
-                      children: [
-                        Text(_authState == AuthState.signUp
-                            ? "Already have an account?"
-                            : "Create new account?"),
-                        TextButton(
-                          onPressed: () {
-                            _setAuthState(_authState == AuthState.signUp
-                                ? AuthState.signIn
-                                : AuthState.signUp);
-                          },
-                          child: Text(_authState == AuthState.signUp
-                              ? "Sign In"
-                              : "Sign Up"),
-                        ),
-                      ],
-                    ),
-                    if (_authState == AuthState.signIn)
+                    if (widget.isLoading)
                       SizedBox(
-                        height: 10,
+                        height: 30,
                       ),
-                    if (_authState == AuthState.signIn)
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isForgotEmailValid = true;
-                            _isForgotEmailRegistered = true;
-                            _textController.text = _email;
-                            _showForgotEmailDialog(context);
-                          });
-                        },
-                        child: Text("Forgot password?"),
-                      ),
+                    if (!widget.isLoading)
+                      Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                _saveForm();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.orange,
+                                  textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18)),
+                              child: Text(_authState == AuthState.signUp
+                                  ? "SIGN UP"
+                                  : "SIGN IN"),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            children: [
+                              Text(_authState == AuthState.signUp
+                                  ? "Already have an account?"
+                                  : "Create new account?"),
+                              TextButton(
+                                onPressed: () {
+                                  _setAuthState(_authState == AuthState.signUp
+                                      ? AuthState.signIn
+                                      : AuthState.signUp);
+                                },
+                                child: Text(_authState == AuthState.signUp
+                                    ? "Sign In"
+                                    : "Sign Up"),
+                              ),
+                            ],
+                          ),
+                          if (_authState == AuthState.signIn)
+                            SizedBox(
+                              height: 10,
+                            ),
+                          if (_authState == AuthState.signIn)
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isForgotEmailValid = true;
+                                  _isForgotEmailRegistered = true;
+                                  _textController.text = _email;
+                                  _showForgotEmailDialog(context);
+                                });
+                              },
+                              child: Text("Forgot password?"),
+                            ),
+                        ],
+                      )
                   ],
                 ),
               ),
