@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/create_task_sheet.dart';
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
@@ -26,7 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
   ];
 
-  void onTabTapped(int index) {
+  void _onTabTapped(int index) {
     setState(() {
       _selectedTabIndex = index;
     });
@@ -64,18 +66,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: Container(
-        alignment: Alignment.center,
-        width: double.infinity,
-        height: double.infinity,
+      body: CreateTaskSheet(
         child: IndexedStack(
           index: _selectedTabIndex,
           children: _tabViews,
         ),
+        onTaskCreated: (taskName) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "The \"$taskName\" task created.",
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        },
       ),
+
+/*      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add_circle_outline,
+          size: 50,
+        ),
+        onPressed: () {},
+      ),
+      */
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedTabIndex,
-        onTap: onTabTapped,
+        onTap: _onTabTapped,
         backgroundColor: Colors.orange[400],
         items: const [
           BottomNavigationBarItem(
