@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:dosprav/models/task.dart';
+import 'package:dosprav/models/category.dart';
+
 class CreateTaskSheet extends StatefulWidget {
   CreateTaskSheet({
     Key? key,
@@ -41,7 +44,7 @@ class CreateTaskSheet extends StatefulWidget {
   final EmergenceType emergenceType;
 
   final void Function(
-    String taskName,
+    Task newTask,
   ) onTaskCreated;
 
   @override
@@ -129,7 +132,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
     super.dispose();
   }
 
-  double globalToSheetHeightPercent(Offset global) {
+  double _globalToSheetHeightPercent(Offset global) {
     final RenderBox renderBox =
         _stackKey.currentContext?.findRenderObject() as RenderBox;
     final Size size = renderBox.size;
@@ -138,8 +141,12 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
     return (1 / widget.sheetContentHeight) * height;
   }
 
+  bool _isSheetOpened () {
+    return _controller?.value == 1; 
+  }
+
   Widget? _createSheetMainContent() {
-    if (_controller!.value < 1) {
+    if (!_isSheetOpened()) {
       return null;
     } else {
       return Column(
@@ -159,6 +166,24 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
         ],
       );
     }
+  }
+
+  void _createTask(){
+        final newTask = Task(
+      id: "",
+      uid: "",
+      name: _editTextController?.value.text ?? "",
+      description: "",
+      taskType: TaskType.disposable,
+      timestampCreated: DateTime.now(),
+      category: Category(
+        id: "",
+        uid: "",
+        name: "Test",
+      ),
+    );
+
+    widget.onTaskCreated(newTask);
   }
 
   @override
@@ -227,7 +252,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
               child: GestureDetector(
                 onPanUpdate: (details) {
                   _controller?.animateTo(
-                      globalToSheetHeightPercent(details.globalPosition));
+                      _globalToSheetHeightPercent(details.globalPosition));
                 },
                 onPanStart: (_) {
                   _controller?.duration = widget.durationOnPan;
@@ -253,6 +278,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                             color: widget.actionButtonColor,
                           ),
                           onPressed: () {
+                            _editTextController?.clear();
                             _controller?.reverse();
                           }),
                       IconButton(
@@ -264,9 +290,10 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                           color: widget.actionButtonColor,
                         ),
                         onPressed: () {
-                          if (_controller!.value == 1) {
-                            widget
-                                .onTaskCreated(_editTextController!.value.text);
+                          if (_isSheetOpened()) {
+                            _createTask();
+                            _editTextController?.clear();
+                             _controller?.reverse();
                           } else {
                             _controller?.forward();
                           }
@@ -286,7 +313,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
           right: 0,
           child: FadeTransition(
             opacity: _actionsFadeAnimation!,
-            child: (_controller!.value == 1)
+            child: (_isSheetOpened())
                 ? null
                 : Container(
                     width: widget.actionButtonSize * 2,

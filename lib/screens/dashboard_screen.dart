@@ -1,7 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/create_task_sheet.dart';
+import 'package:provider/provider.dart';
+
+import 'package:dosprav/widgets/create_task_sheet.dart';
+import 'package:dosprav/models/task.dart';
+import 'package:dosprav/providers/tasks_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -24,7 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
     ElevatedButton(
       onPressed: _logout,
-      child: const Text("LOGOUT"),
+      child: Text("LOGOUT"),
     ),
   ];
 
@@ -50,6 +54,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  void _createTask(Task newTask) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "The \"${newTask.name}\" task created.",
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+
+    Provider.of<TasksProvider>(context, listen: false).addTask(newTask);
+
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,31 +86,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: CreateTaskSheet(
+        onTaskCreated: _createTask,
         child: IndexedStack(
           index: _selectedTabIndex,
           children: _tabViews,
         ),
-        onTaskCreated: (taskName) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                "The \"$taskName\" task created.",
-                textAlign: TextAlign.center,
-              ),
-            ),
-          );
-        },
       ),
-
-/*      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add_circle_outline,
-          size: 50,
-        ),
-        onPressed: () {},
-      ),
-      */
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedTabIndex,

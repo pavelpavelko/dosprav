@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
 
 import 'screens/auth_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'providers/tasks_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
@@ -21,12 +23,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'do.sprav',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (ctx) => TasksProvider(),
+      child: MaterialApp(
+        title: 'do.sprav',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(title: 'do.sprav'),
       ),
-      home: const MyHomePage(title: 'do.sprav'),
     );
   }
 }
