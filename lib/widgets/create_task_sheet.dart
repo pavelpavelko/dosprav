@@ -1,15 +1,13 @@
-import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
 
-import 'package:dosprav/models/task.dart';
-import 'package:dosprav/models/category.dart';
+import 'package:dosprav/widgets/task_compose.dart';
 
 class CreateTaskSheet extends StatefulWidget {
-  CreateTaskSheet({
+  const CreateTaskSheet({
     Key? key,
     required this.child,
     this.sheetTopBarHeight = 5,
-    this.sheetContentHeight = 250,
+    this.sheetContentHeight = 300,
     this.durationOnPan = const Duration(milliseconds: 50),
     this.durationOnTap = const Duration(milliseconds: 700),
     this.actionButtonSize = 70,
@@ -20,7 +18,6 @@ class CreateTaskSheet extends StatefulWidget {
     this.sheetBackgroundColor = Colors.white,
     this.animationCurve = Curves.easeIn,
     this.emergenceType = EmergenceType.cover,
-    required this.onTaskCreated,
   }) : super(key: key);
 
   final Widget child;
@@ -44,10 +41,6 @@ class CreateTaskSheet extends StatefulWidget {
 
   final EmergenceType emergenceType;
 
-  final void Function(
-    Task newTask,
-  ) onTaskCreated;
-
   @override
   _CreateTaskSheetState createState() => _CreateTaskSheetState();
 }
@@ -59,8 +52,8 @@ enum EmergenceType {
 
 class _CreateTaskSheetState extends State<CreateTaskSheet>
     with SingleTickerProviderStateMixin {
-  // ignore: prefer_final_fields
-  GlobalKey _stackKey = GlobalKey();
+  final GlobalKey _stackKey = GlobalKey();
+  final GlobalKey<TaskComposeState> _taskComposeState = GlobalKey();
 
   AnimationController? _controller;
   Animation<Size>? _heightAnimation;
@@ -68,13 +61,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
   Animation<double>? _actionsRotationAnimation;
   Animation<double>? _actionsFadeAnimation;
 
-  TextEditingController? _editTextController;
-
   @override
   void initState() {
     super.initState();
-
-    _editTextController = TextEditingController();
 
     _controller = AnimationController(
       vsync: this,
@@ -129,7 +118,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
   @override
   void dispose() {
     _controller?.dispose();
-    _editTextController?.dispose();
     super.dispose();
   }
 
@@ -150,40 +138,12 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
     if (!_isSheetOpened()) {
       return null;
     } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Let's create a task!",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-          TextField(
-            controller: _editTextController,
-            decoration: InputDecoration(hintText: 'New Task'),
-          ),
-        ],
+      return SingleChildScrollView(
+        child: TaskCompose(
+          key: _taskComposeState,
+        ),
       );
     }
-  }
-
-  void _createTask() {
-    final newTask = Task(
-      id: UniqueKey().toString(),
-      uid: "",
-      name: _editTextController?.value.text ?? "",
-      description: "",
-//      taskType: TaskType.disposable,
-      timestampCreated: DateTime.now(),
-      intervalDuration: Duration(days: 0),
-
-      dueDate: DateTime.now(),
-      category: TasksProvider.tempCat,
-    );
-
-    widget.onTaskCreated(newTask);
   }
 
   @override
@@ -278,7 +238,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                             color: widget.actionButtonColor,
                           ),
                           onPressed: () {
-                            _editTextController?.clear();
                             _controller?.reverse();
                           }),
                       IconButton(
@@ -291,9 +250,12 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                         ),
                         onPressed: () {
                           if (_isSheetOpened()) {
-                            _createTask();
-                            _editTextController?.clear();
-                            _controller?.reverse();
+                            bool result =
+                                _taskComposeState.currentState?.tryCompose() ??
+                                    false;
+                            if (result) {
+                              _controller?.reverse();
+                            }
                           } else {
                             _controller?.forward();
                           }

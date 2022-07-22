@@ -1,12 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
-
 import 'package:dosprav/widgets/create_task_sheet.dart';
-import 'package:dosprav/models/task.dart';
-import 'package:dosprav/providers/tasks_provider.dart';
-
 import 'package:dosprav/widgets/daily_view.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -53,20 +48,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  void _createTask(Task newTask) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "The \"${newTask.name}\" task created.",
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-
-    Provider.of<TasksProvider>(context, listen: false).addTask(newTask);
-
-    
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +66,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: CreateTaskSheet(
-        onTaskCreated: _createTask,
         child: IndexedStack(
           index: _selectedTabIndex,
           children: _tabViews,

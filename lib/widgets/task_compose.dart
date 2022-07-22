@@ -72,6 +72,7 @@ class TaskComposeState extends State<TaskCompose> {
           description: _taskDescriptionController.text.trim(),
           dueDate: _dueDate,
           intervalDuration: _intervalDuration);
+      _tasksProvider!.updateTask(newTask);
     } else {
       newTask = Task(
         id: UniqueKey().toString(),
@@ -83,9 +84,8 @@ class TaskComposeState extends State<TaskCompose> {
         timestampCreated: DateTime.now(),
         category: TasksProvider.tempCat,
       );
+      _tasksProvider!.addTask(newTask);
     }
-
-    Provider.of<TasksProvider>(context, listen: false).updateTask(newTask);
 
     return true;
   }
@@ -97,8 +97,7 @@ class TaskComposeState extends State<TaskCompose> {
 
     if (_taskNameController.text != _taskToEdit!.name ||
         _taskDescriptionController.text != _taskToEdit!.description ||
-        TaskHelper.compareDatesByDays(_dueDate, _taskToEdit!.dueDate) !=
-            0 ||
+        TaskHelper.compareDatesByDays(_dueDate, _taskToEdit!.dueDate) != 0 ||
         _intervalDuration != _taskToEdit!.intervalDuration) {
       return true;
     }
@@ -133,7 +132,9 @@ class TaskComposeState extends State<TaskCompose> {
                 child: TextField(
                   controller: _taskNameController,
                   onChanged: (value) {
-                    widget.updateTaskChanged!(checkIsTaskChanged());
+                    if (widget.updateTaskChanged != null) {
+                      widget.updateTaskChanged!(checkIsTaskChanged());
+                    }
                   },
                   decoration: InputDecoration(
                     hintText: "Name",
@@ -177,11 +178,15 @@ class TaskComposeState extends State<TaskCompose> {
               ),
               Expanded(
                 child: TextField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
+                  keyboardType: _taskToEdit != null
+                      ? TextInputType.multiline
+                      : TextInputType.text,
+                  maxLines: _taskToEdit != null ? null : 1,
                   controller: _taskDescriptionController,
                   onChanged: (value) {
-                    widget.updateTaskChanged!(checkIsTaskChanged());
+                    if (widget.updateTaskChanged != null) {
+                      widget.updateTaskChanged!(checkIsTaskChanged());
+                    }
                   },
                   decoration: InputDecoration(
                     hintText: "Description",
@@ -224,7 +229,9 @@ class TaskComposeState extends State<TaskCompose> {
                       if (pickedDate != null) {
                         setState(() {
                           _dueDate = pickedDate;
-                          widget.updateTaskChanged!(checkIsTaskChanged());
+                          if (widget.updateTaskChanged != null) {
+                            widget.updateTaskChanged!(checkIsTaskChanged());
+                          }
                         });
                       }
 
@@ -255,7 +262,9 @@ class TaskComposeState extends State<TaskCompose> {
                       onChanged: (value) {
                         setState(() {
                           _intervalDuration = value.interval!;
-                          widget.updateTaskChanged!(checkIsTaskChanged());
+                          if (widget.updateTaskChanged != null) {
+                            widget.updateTaskChanged!(checkIsTaskChanged());
+                          }
                         });
                         FocusManager.instance.primaryFocus?.unfocus();
                       },
