@@ -7,6 +7,8 @@ import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
 
+import 'package:dosprav/widgets/daily_view.dart';
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
@@ -18,10 +20,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedTabIndex = 0;
 
   static const List<Widget> _tabViews = <Widget>[
-    Icon(
-      Icons.home,
-      size: 80,
-    ),
+    DailyView(),
     Icon(
       Icons.list,
       size: 80,

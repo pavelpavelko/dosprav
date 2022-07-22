@@ -5,9 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/auth_screen.dart';
-import 'screens/dashboard_screen.dart';
-import 'providers/tasks_provider.dart';
+import 'package:dosprav/screens/auth_screen.dart';
+import 'package:dosprav/screens/dashboard_screen.dart';
+import 'package:dosprav/providers/tasks_provider.dart';
+import 'package:dosprav/screens/task_compose_screen.dart';
+import 'package:dosprav/screens/task_detail_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
@@ -31,6 +34,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: const MyHomePage(title: 'do.sprav'),
+        routes: {
+          TaskDetailScreen.routeName :(context) => TaskDetailScreen(),
+          TaskComposeScreen.routeName :(context) => TaskComposeScreen(),
+        },
       ),
     );
   }

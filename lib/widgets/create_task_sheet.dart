@@ -1,3 +1,4 @@
+import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dosprav/models/task.dart';
@@ -141,8 +142,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
     return (1 / widget.sheetContentHeight) * height;
   }
 
-  bool _isSheetOpened () {
-    return _controller?.value == 1; 
+  bool _isSheetOpened() {
+    return _controller?.value == 1;
   }
 
   Widget? _createSheetMainContent() {
@@ -168,19 +169,18 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
     }
   }
 
-  void _createTask(){
-        final newTask = Task(
-      id: "",
+  void _createTask() {
+    final newTask = Task(
+      id: UniqueKey().toString(),
       uid: "",
       name: _editTextController?.value.text ?? "",
       description: "",
-      taskType: TaskType.disposable,
+//      taskType: TaskType.disposable,
       timestampCreated: DateTime.now(),
-      category: Category(
-        id: "",
-        uid: "",
-        name: "Test",
-      ),
+      intervalDuration: Duration(days: 0),
+
+      dueDate: DateTime.now(),
+      category: TasksProvider.tempCat,
     );
 
     widget.onTaskCreated(newTask);
@@ -293,7 +293,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                           if (_isSheetOpened()) {
                             _createTask();
                             _editTextController?.clear();
-                             _controller?.reverse();
+                            _controller?.reverse();
                           } else {
                             _controller?.forward();
                           }
