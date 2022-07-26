@@ -17,23 +17,23 @@ class DailyViewListItem extends StatelessWidget {
     return Dismissible(
       key: UniqueKey(),
       background: Container(
-        color: Colors.green,
+        color: Theme.of(context).colorScheme.primary.withAlpha(85),
         alignment: Alignment.centerLeft,
-        padding: EdgeInsets.only(left: 30),
+        padding: EdgeInsets.only(left: 25),
         child: Icon(
           Icons.check_outlined,
           color: Colors.white,
-          size: 25,
+          size: 35,
         ),
       ),
       secondaryBackground: Container(
-        color: Theme.of(context).errorColor,
+        color: Theme.of(context).errorColor.withAlpha(85),
         alignment: Alignment.centerRight,
         padding: EdgeInsets.only(right: 30),
         child: Icon(
           Icons.delete,
           color: Colors.white,
-          size: 20,
+          size: 25,
         ),
       ),
       direction: task.isComplete
@@ -68,7 +68,7 @@ class DailyViewListItem extends StatelessWidget {
               child: task.isComplete
                   ? Icon(
                       Icons.check,
-                      color: Colors.green,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 35,
                     )
                   : Text(
@@ -76,6 +76,7 @@ class DailyViewListItem extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 35,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
             ),
@@ -91,8 +92,8 @@ class DailyViewListItem extends StatelessWidget {
               task.name,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: task.isComplete ? FontWeight.w300 : FontWeight.bold,
+                fontSize: 19,
+                fontWeight: FontWeight.normal,
                 decoration: task.isComplete ? TextDecoration.lineThrough : null,
               ),
             ),

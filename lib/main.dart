@@ -11,17 +11,21 @@ import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/screens/task_compose_screen.dart';
 import 'package:dosprav/screens/task_detail_screen.dart';
 
-
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  final colorScheme = ColorScheme.fromSeed(
+    seedColor: Color.fromARGB(255, 56, 179, 199),
+    secondary: Color.fromARGB(255, 255, 167, 120),
+  );
 
   // This widget is the root of your application.
   @override
@@ -31,12 +35,23 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'do.sprav',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          colorScheme: colorScheme,
+          useMaterial3: true,
+          fontFamily: "Baloo2",
+          appBarTheme: ThemeData.light().appBarTheme.copyWith(
+                centerTitle: true,
+                titleTextStyle: TextStyle(
+                  fontFamily: "Prompt",
+                  fontSize: 22,
+                  color: Colors.black,
+                ),
+//                backgroundColor: Color.fromARGB(255, 24, 179, 179),
+              ),
         ),
         home: const MyHomePage(title: 'do.sprav'),
         routes: {
-          TaskDetailScreen.routeName :(context) => TaskDetailScreen(),
-          TaskComposeScreen.routeName :(context) => TaskComposeScreen(),
+          TaskDetailScreen.routeName: (context) => TaskDetailScreen(),
+          TaskComposeScreen.routeName: (context) => TaskComposeScreen(),
         },
       ),
     );

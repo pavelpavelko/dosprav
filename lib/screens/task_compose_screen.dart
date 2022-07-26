@@ -35,7 +35,7 @@ class _TaskComposeScreenState extends State<TaskComposeScreen> {
           TextButton(
               child: Text(
                 "Discard Changes",
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               onPressed: () {
                 Navigator.of(ctx).pop(true);
@@ -86,19 +86,23 @@ class _TaskComposeScreenState extends State<TaskComposeScreen> {
             },
             icon: Icon(
               Icons.cancel,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           actions: [
             IconButton(
-                onPressed: _taskChanged
-                    ? () {
-                      bool result = _taskComposeState.currentState?.tryCompose() ?? false;
-                      if(result) {
-                          Navigator.of(context).pop();
-                        }
+              onPressed: _taskChanged
+                  ? () {
+                      bool result =
+                          _taskComposeState.currentState?.tryCompose() ?? false;
+                      if (result) {
+                        Navigator.of(context).pop();
                       }
-                    : null,
-                icon: Icon(Icons.save))
+                    }
+                  : null,
+              icon: Icon(Icons.save),
+              color: Theme.of(context).colorScheme.primary,
+            )
           ],
         ),
         body: SingleChildScrollView(

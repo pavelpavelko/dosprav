@@ -39,12 +39,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _appBarTitleText() {
     switch (_selectedTabIndex) {
       case 1:
-        return "ALL";
+        return "All";
       case 2:
-        return "SETTINGS";
+        return "Settings";
       case 0:
       default:
-        return "HOME";
+        return "Home";
     }
   }
 
@@ -54,7 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitleText()),
-        backgroundColor: Colors.blue[400],
+//        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
             padding: EdgeInsets.only(right: 15),
@@ -66,6 +66,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: CreateTaskSheet(
+        sheetTopBarColor: Theme.of(context).colorScheme.primary,
+        actionButtonFrameColor: Theme.of(context).colorScheme.secondary,
+        actionButtonColor: Theme.of(context).colorScheme.primary,
+        actionButtonSize: 70,
         child: IndexedStack(
           index: _selectedTabIndex,
           children: _tabViews,
@@ -74,20 +78,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedTabIndex,
+        iconSize: 28,
+        selectedFontSize: 15,
+        unselectedFontSize: 13,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        showUnselectedLabels: false,
         onTap: _onTabTapped,
-        backgroundColor: Colors.orange[400],
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: "HOME",
+            label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: "ALL",
+            label: "All",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: "SETTINGS",
+            label: "Settings",
           ),
         ],
       ),

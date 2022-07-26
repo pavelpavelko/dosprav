@@ -91,7 +91,7 @@ class AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -101,9 +101,9 @@ class AuthScreenState extends State<AuthScreen> {
             Text(
               "DO.SPRAV",
               style: TextStyle(
-                fontSize: 27,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
               ),
             ),
             SizedBox(
@@ -111,11 +111,11 @@ class AuthScreenState extends State<AuthScreen> {
             ),
             Image(
               image: AssetImage("assets/images/target_arrow.png"),
-              height: 150,
+              height: 145,
               width: double.infinity,
             ),
             SizedBox(
-              height: 20,
+              height: 15,
             ),
             AuthForm(
               isLoading: _isLoading,

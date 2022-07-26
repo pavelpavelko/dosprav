@@ -28,13 +28,14 @@ class TaskDetail extends StatelessWidget {
                 child: task.isComplete
                     ? Icon(
                         Icons.check,
-                        color: Colors.green,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 35,
                       )
                     : Text(
                         "\u2022",
                         style: TextStyle(
                           fontSize: 35,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -46,10 +47,8 @@ class TaskDetail extends StatelessWidget {
                 child: Text(
                   task.name,
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 20,
                     overflow: TextOverflow.visible,
-                    fontWeight:
-                        task.isComplete ? FontWeight.w300 : FontWeight.bold,
                     decoration:
                         task.isComplete ? TextDecoration.lineThrough : null,
                   ),
@@ -58,11 +57,6 @@ class TaskDetail extends StatelessWidget {
             ],
           ),
         ),
-        if (task.description.isNotEmpty)
-          Divider(
-            height: 1,
-            color: Colors.brown,
-          ),
         if (task.description.isNotEmpty)
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
@@ -75,7 +69,7 @@ class TaskDetail extends StatelessWidget {
                   height: 50,
                   child: Icon(
                     Icons.description,
-                    color: Colors.brown,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 SizedBox(
@@ -111,7 +105,7 @@ class TaskDetail extends StatelessWidget {
                 height: 50,
                 child: Icon(
                   Icons.date_range_sharp,
-                  color: Colors.brown,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               SizedBox(
@@ -137,8 +131,8 @@ class TaskDetail extends StatelessWidget {
           ),
         ),
         Divider(
-          height: 1,
-          color: Colors.brown,
+          height: 2,
+          color: Theme.of(context).colorScheme.primary,
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
@@ -150,7 +144,7 @@ class TaskDetail extends StatelessWidget {
                 height: 50,
                 child: Icon(
                   Icons.category_outlined,
-                  color: Colors.brown,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               SizedBox(

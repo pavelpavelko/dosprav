@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/helpers/task_helper.dart';
+
+import 'package:dosprav/widgets/interval_picker_dialog.dart';
 
 class TaskCompose extends StatefulWidget {
   const TaskCompose({Key? key, this.taskId, this.updateTaskChanged})
@@ -121,7 +122,7 @@ class TaskComposeState extends State<TaskCompose> {
                   "\u2022",
                   style: TextStyle(
                     fontSize: 35,
-                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -146,18 +147,14 @@ class TaskComposeState extends State<TaskCompose> {
                         : null,
                   ),
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 20,
                     overflow: TextOverflow.visible,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
               ),
             ],
           ),
-        ),
-        Divider(
-          height: 1,
-          color: Colors.brown,
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
@@ -170,7 +167,7 @@ class TaskComposeState extends State<TaskCompose> {
                 height: 50,
                 child: Icon(
                   Icons.description,
-                  color: Colors.brown,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               SizedBox(
@@ -211,7 +208,7 @@ class TaskComposeState extends State<TaskCompose> {
                 height: 50,
                 child: Icon(
                   Icons.date_range_sharp,
-                  color: Colors.brown,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               SizedBox(
@@ -234,7 +231,6 @@ class TaskComposeState extends State<TaskCompose> {
                           }
                         });
                       }
-
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                   );
@@ -243,6 +239,7 @@ class TaskComposeState extends State<TaskCompose> {
                   TaskHelper.formatDueDate(_dueDate),
                   style: TextStyle(
                     fontSize: 20,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
               ),
@@ -251,29 +248,33 @@ class TaskComposeState extends State<TaskCompose> {
                 padding: EdgeInsets.only(right: 10),
                 child: TextButton(
                   onPressed: () {
-                    showMaterialRadioPicker<IntervalModel>(
-                      context: context,
-                      title: "Pick interval for the task",
-                      items: IntervalModel.intervals,
-                      selectedItem: IntervalModel.getIntervalModelByDuration(
-                          _intervalDuration),
-                      onCancelled: () =>
-                          FocusManager.instance.primaryFocus?.unfocus(),
-                      onChanged: (value) {
-                        setState(() {
-                          _intervalDuration = value.interval!;
-                          if (widget.updateTaskChanged != null) {
-                            widget.updateTaskChanged!(checkIsTaskChanged());
-                          }
+                    showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return IntervalPickerDialog(
+                            selectedItem:
+                                IntervalModel.getIntervalModelByDuration(
+                                    _intervalDuration),
+                            onCancel: () =>
+                                FocusManager.instance.primaryFocus?.unfocus(),
+                            onConfirm: (value) {
+                              setState(() {
+                                _intervalDuration = value.interval!;
+                                if (widget.updateTaskChanged != null) {
+                                  widget
+                                      .updateTaskChanged!(checkIsTaskChanged());
+                                }
+                              });
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                          );
                         });
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                    );
                   },
                   child: Text(
                     TaskHelper.formatIntervalDuration(_intervalDuration),
                     style: TextStyle(
                       fontSize: 20,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                 ),
@@ -282,8 +283,8 @@ class TaskComposeState extends State<TaskCompose> {
           ),
         ),
         Divider(
-          height: 1,
-          color: Colors.brown,
+          height: 2,
+          color: Theme.of(context).colorScheme.primary,
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
@@ -295,7 +296,7 @@ class TaskComposeState extends State<TaskCompose> {
                 height: 50,
                 child: Icon(
                   Icons.category_outlined,
-                  color: Colors.brown,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               SizedBox(

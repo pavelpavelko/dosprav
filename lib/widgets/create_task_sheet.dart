@@ -155,7 +155,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
           Container(
             alignment: Alignment.center,
             width: double.infinity,
-            color: Colors.grey,
+//            color: Theme.of(context).colorScheme.secondaryContainer,
+            color: Colors.white24,
             child: widget.child,
           ),
         if (widget.emergenceType == EmergenceType.cover)
@@ -181,7 +182,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                 child: Container(
                   alignment: Alignment.center,
                   width: double.infinity,
-                  color: Colors.grey,
+//                  color: Theme.of(context).colorScheme.secondaryContainer,
                   child: widget.child,
                 ),
               ),
@@ -222,6 +223,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                   _controller?.animateTo(_controller!.value >= 0.5 ? 1 : 0);
                 },
                 child: Container(
+//                  height: widget.actionButtonSize,
                   margin: EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
@@ -232,7 +234,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                       IconButton(
                           iconSize: widget.actionButtonSize,
                           padding: EdgeInsets.zero,
-                          splashRadius: widget.actionButtonSize / 2,
+                          //splashRadius: widget.actionButtonSize / 2,
                           icon: Icon(
                             Icons.cancel_outlined,
                             color: widget.actionButtonColor,
@@ -243,7 +245,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                       IconButton(
                         iconSize: widget.actionButtonSize,
                         padding: EdgeInsets.zero,
-                        splashRadius: widget.actionButtonSize / 2,
+                        //splashRadius: widget.actionButtonSize / 2,
                         icon: Icon(
                           widget.actionButtonIcon,
                           color: widget.actionButtonColor,

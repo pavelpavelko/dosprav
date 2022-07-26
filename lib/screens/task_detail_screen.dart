@@ -32,7 +32,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Task Details"),
-        backgroundColor: Colors.blue[400],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -49,8 +48,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 5),
                       child: ElevatedButton(
                         style: ButtonStyle(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                                EdgeInsets.all(0))),
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.all(0)),
+                          backgroundColor: !task.isComplete
+                              ? MaterialStateProperty.all(
+                                  Theme.of(context).colorScheme.secondary,
+                                )
+                              : null,
+                        ),
                         onPressed: () {
                           final updatedTask = Task.fromTask(
                               origin: task, isComplete: !task.isComplete);
@@ -58,7 +63,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               .updateTask(updatedTask);
                           Navigator.of(context).pop();
                         },
-                        child: Text(task.isComplete ? "Undo" : "Complete"),
+                        child: Text(
+                          !task.isComplete ? "Complete" : "Undo",
+                          style: TextStyle(
+                            color: !task.isComplete
+                                ? Theme.of(context).colorScheme.onSecondary
+                                : null,
+                          ),
+                        ),
                       ),
                     ),
                   ),

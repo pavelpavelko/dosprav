@@ -24,7 +24,7 @@ enum AuthState {
 }
 
 class AuthFormState extends State<AuthForm> {
-  AuthState _authState = AuthState.signUp;
+  AuthState _authState = AuthState.signIn;
   final TextEditingController _textController = TextEditingController();
   String _forgotEmail = "";
 
@@ -172,18 +172,18 @@ class AuthFormState extends State<AuthForm> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+          borderRadius: BorderRadius.circular(20.0),
         ),
         child: Column(
           children: [
             Container(
-              height: 60,
+              height: 50,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: Theme.of(context).colorScheme.primary.withAlpha(220),
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(15),
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
               ),
               child: Center(
@@ -192,9 +192,9 @@ class AuthFormState extends State<AuthForm> {
                       ? "Let's get to know each other!"
                       : "Welcome, good to see you again!",
                   style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: Theme.of(context).colorScheme.onPrimary),
                 ),
               ),
             ),
@@ -309,13 +309,19 @@ class AuthFormState extends State<AuthForm> {
                                 _saveForm();
                               },
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.orange,
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18)),
-                              child: Text(_authState == AuthState.signUp
-                                  ? "SIGN UP"
-                                  : "SIGN IN"),
+                                primary:
+                                    Theme.of(context).colorScheme.secondary,
+                              ),
+                              child: Text(
+                                _authState == AuthState.signUp
+                                    ? "SIGN UP"
+                                    : "SIGN IN",
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                ),
+                              ),
                             ),
                           ),
                           SizedBox(
