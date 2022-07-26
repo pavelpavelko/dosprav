@@ -69,7 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         sheetTopBarColor: Theme.of(context).colorScheme.primary,
         actionButtonFrameColor: Theme.of(context).colorScheme.secondary,
         actionButtonColor: Theme.of(context).colorScheme.primary,
-        actionButtonSize: 70,
+        actionButtonSize: 60,
         child: IndexedStack(
           index: _selectedTabIndex,
           children: _tabViews,

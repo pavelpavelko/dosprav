@@ -108,6 +108,9 @@ class TaskComposeState extends State<TaskCompose> {
 
   @override
   Widget build(BuildContext context) {
+
+    final FocusNode descriptionFocusNode = FocusNode();
+    
     return Column(
       children: [
         Padding(
@@ -137,6 +140,7 @@ class TaskComposeState extends State<TaskCompose> {
                       widget.updateTaskChanged!(checkIsTaskChanged());
                     }
                   },
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     hintText: "Name",
                     hintStyle: TextStyle(
@@ -151,6 +155,9 @@ class TaskComposeState extends State<TaskCompose> {
                     overflow: TextOverflow.visible,
                     fontWeight: FontWeight.normal,
                   ),
+                  onEditingComplete: () {
+                    FocusScope.of(context).requestFocus(descriptionFocusNode);
+                  },
                 ),
               ),
             ],
@@ -175,6 +182,7 @@ class TaskComposeState extends State<TaskCompose> {
               ),
               Expanded(
                 child: TextField(
+                  focusNode: descriptionFocusNode,
                   keyboardType: _taskToEdit != null
                       ? TextInputType.multiline
                       : TextInputType.text,
