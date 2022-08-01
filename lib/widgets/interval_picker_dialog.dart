@@ -92,7 +92,7 @@ class _IntervalPickerDialogState extends State<IntervalPickerDialog> {
                   Navigator.of(context).pop(false);
                   widget.onCancel();
                 },
-                child: Text("Cancel"),
+                child: Text("CANCEL"),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
@@ -101,7 +101,7 @@ class _IntervalPickerDialogState extends State<IntervalPickerDialog> {
                     widget.onConfirm(_selectedInterval!);
                     Navigator.of(context).pop(true);
                   },
-                  child: Text("Ok"),
+                  child: Text("OK"),
                 ),
               ),
             ],

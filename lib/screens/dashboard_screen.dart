@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/daily_view.dart';
+import 'package:dosprav/widgets/views_gallery.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -16,13 +17,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   static const List<Widget> _tabViews = <Widget>[
     DailyView(),
-    Icon(
-      Icons.list,
-      size: 80,
-    ),
-    ElevatedButton(
-      onPressed: _logout,
-      child: Text("LOGOUT"),
+    ViewsGallery(),
+    Center(
+      child: ElevatedButton(
+        onPressed: _logout,
+        child: Text("LOGOUT"),
+      ),
     ),
   ];
 
@@ -48,13 +48,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitleText()),
-//        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
             padding: EdgeInsets.only(right: 15),

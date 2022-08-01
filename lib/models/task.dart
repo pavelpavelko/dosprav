@@ -5,7 +5,6 @@ class Task implements Comparable {
   final String uid;
   final String name;
   final String description;
-//  final TaskType taskType;
   final DateTime timestampCreated;
   final DateTime dueDate;
   final Duration intervalDuration;
@@ -17,7 +16,6 @@ class Task implements Comparable {
     required this.uid,
     required this.name,
     required this.description,
- //   required this.taskType,
     required this.timestampCreated,
     required this.dueDate,
     this.isComplete = false,
@@ -35,7 +33,6 @@ class Task implements Comparable {
     Duration? intervalDuration,
   })  : id = origin.id,
         uid = origin.uid,
-//        taskType = origin.taskType,
         timestampCreated = origin.timestampCreated,
         name = name ?? origin.name,
         description = description ?? origin.description,
@@ -60,9 +57,3 @@ class Task implements Comparable {
     return left.timestampCreated.compareTo(right.timestampCreated);
   }
 }
-/*
-enum TaskType {
-  disposable,
-  goalTrack,
-}
-*/

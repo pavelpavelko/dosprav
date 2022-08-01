@@ -21,7 +21,6 @@ class TasksProvider with ChangeNotifier {
       category: tempCat,
       timestampCreated: DateTime.now().add(Duration(minutes: 1)),
       dueDate: DateTime.now().add(Duration(days: 2)),
-//      taskType: TaskType.disposable,
       intervalDuration: Duration(days: 1),
     ),
     Task(
@@ -33,27 +32,16 @@ class TasksProvider with ChangeNotifier {
       timestampCreated: DateTime.now().add(Duration(minutes: 3)),
       dueDate: DateTime.now(),
       isComplete: true,
-//      taskType: TaskType.disposable,
       intervalDuration: Duration(days: 0),
     ),
     Task(
       id: UniqueKey().toString(),
       uid: "",
       name: "Cook Borsch",
-      description: """The ingredients:
-- Onion
-- Beetroot
-- Carrot
-- Tomato sause
-- Chiken
-- Beans
-- Potato
-- Cabbage
-""",
+      description: "The ingredients:\n- Onion\n- Beetroot\n- Carrot\n- Tomato sause\n- Chiken\n- Beans\n- Potato\n- Cabbage",
       category: tempCat,
       timestampCreated: DateTime.now().add(Duration(minutes: 5)),
       dueDate: DateTime.now(),
-//      taskType: TaskType.disposable,
       intervalDuration: Duration(days: 14),
     ),
     Task(
@@ -64,7 +52,6 @@ class TasksProvider with ChangeNotifier {
       category: tempCat,
       timestampCreated: DateTime.now().add(Duration(minutes: 10)),
       dueDate: DateTime.now(),
-//      taskType: TaskType.disposable,
       intervalDuration: Duration(days: 7),
     ),
   ];

@@ -9,7 +9,19 @@ import 'package:dosprav/models/task.dart';
 import 'package:dosprav/widgets/daily_view_list_item.dart';
 
 class DailyView extends StatefulWidget {
-  const DailyView({Key? key}) : super(key: key);
+  const DailyView({
+    Key? key,
+    this.isCompleteVisible = false,
+    this.isNextWeekVisible = false,
+    this.isSuggestedVisible = false,
+    this.demoItems,
+  }) : super(key: key);
+
+  final bool isCompleteVisible;
+  final bool isNextWeekVisible;
+  final bool isSuggestedVisible;
+
+  final List<Task>? demoItems;
 
   @override
   _DailyViewState createState() => _DailyViewState();
@@ -21,8 +33,16 @@ class _DailyViewState extends State<DailyView> {
   bool _isSuggestedVisible = false;
 
   @override
+  void initState() {
+    super.initState();
+    _isCompletedVisible = widget.isCompleteVisible;
+    _isNextWeekVisible = widget.isNextWeekVisible;
+    _isSuggestedVisible = widget.isSuggestedVisible;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<Task> items = Provider.of<TasksProvider>(context).items;
+    List<Task> items = widget.demoItems ?? Provider.of<TasksProvider>(context).items;
     items.sort();
 
     return Card(
@@ -122,7 +142,7 @@ class _DailyViewState extends State<DailyView> {
                               )
                             : null,
                         child: IconButton(
-                        padding: EdgeInsets.zero,
+                          padding: EdgeInsets.zero,
                           iconSize: 25,
                           icon: Icon(
                             _isSuggestedVisible
@@ -143,18 +163,8 @@ class _DailyViewState extends State<DailyView> {
               ],
             ),
           ),
-/*          Padding(
-            padding: EdgeInsets.all(5),
-            child: Text(
-              "Your tasks for today:",
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-           ),*/
           Expanded(
             child: ListView(
-//              padding: EdgeInsets.symmetric(vertical: 5),
               children: ListTile.divideTiles(
                   color: Theme.of(context).colorScheme.primary,
                   tiles: items

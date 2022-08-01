@@ -52,14 +52,14 @@ class TaskHelper {
 class IntervalModel {
   const IntervalModel(this.name, this.interval);
   final String name;
-  final Duration? interval;
+  final Duration interval;
 
   @override
   String toString() => name;
 
   static const List<IntervalModel> intervals = <IntervalModel>[
     IntervalModel("Once", Duration(days: 0)),
-    IntervalModel("Daily", Duration(days: 1)),
+    IntervalModel("Everyday", Duration(days: 1)),
     IntervalModel("Every 2 days", Duration(days: 2)),
     IntervalModel("Semiweekly", Duration(days: 3)),
     IntervalModel("Weekly", Duration(days: 7)),
@@ -68,7 +68,7 @@ class IntervalModel {
     IntervalModel("Monthly", Duration(days: 30)),
   ];
 
-  static IntervalModel getIntervalModelByDuration(Duration? interval) {
+  static IntervalModel getIntervalModelByDuration(Duration interval) {
     return intervals.firstWhere((element) => element.interval == interval);
   }
 }

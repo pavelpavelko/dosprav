@@ -267,7 +267,7 @@ class TaskComposeState extends State<TaskCompose> {
                                 FocusManager.instance.primaryFocus?.unfocus(),
                             onConfirm: (value) {
                               setState(() {
-                                _intervalDuration = value.interval!;
+                                _intervalDuration = value.interval;
                                 if (widget.updateTaskChanged != null) {
                                   widget
                                       .updateTaskChanged!(checkIsTaskChanged());

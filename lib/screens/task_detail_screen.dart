@@ -66,6 +66,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         child: Text(
                           !task.isComplete ? "Complete" : "Undo",
                           style: TextStyle(
+                            fontWeight: !task.isComplete
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             color: !task.isComplete
                                 ? Theme.of(context).colorScheme.onSecondary
                                 : null,
