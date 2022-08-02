@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ViewModel {
   final String id;
   final String uid;
@@ -5,6 +7,7 @@ class ViewModel {
   final String imageUrl;
   final bool isActivated;
   final String description;
+  final Widget Function() createViewPreview;
 
   ViewModel({
     required this.id,
@@ -13,6 +16,7 @@ class ViewModel {
     required this.imageUrl,
     this.isActivated = false,
     required this.description,
+    required this.createViewPreview,
   });
 
   ViewModel.fromViewModel({
@@ -23,6 +27,7 @@ class ViewModel {
         name = origin.name,
         imageUrl = origin.imageUrl,
         description = origin.description,
+        createViewPreview = origin.createViewPreview,
         isActivated = isActivated ?? origin.isActivated;
 }
 

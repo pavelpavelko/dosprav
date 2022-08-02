@@ -7,52 +7,15 @@ import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/widgets/daily_view.dart';
 import 'package:dosprav/widgets/daily_view_list_item.dart';
 
-class DailyViewTutorial extends StatefulWidget {
-  const DailyViewTutorial({Key? key, required this.onClose}) : super(key: key);
-
-  final void Function() onClose;
+class DailyViewPreview extends StatefulWidget {
+  const DailyViewPreview({Key? key})
+      : super(key: key);
 
   @override
-  _DailyViewTutorialState createState() => _DailyViewTutorialState();
-
-  static List<Task> getTutorialTasks() {
-    return [
-      Task(
-        id: UniqueKey().toString(),
-        uid: "",
-        name: "Install do.sprav",
-        description: "",
-        category: TasksProvider.tempCat,
-        timestampCreated: DateTime.now(),
-        dueDate: DateTime.now(),
-        intervalDuration: Duration(days: 0),
-        isComplete: true,
-      ),
-      Task(
-        id: UniqueKey().toString(),
-        uid: "",
-        name: "Pass the tutorial",
-        description: "",
-        category: TasksProvider.tempCat,
-        timestampCreated: DateTime.now().add(Duration(minutes: 1)),
-        dueDate: DateTime.now(),
-        intervalDuration: Duration(days: 0),
-      ),
-      Task(
-        id: UniqueKey().toString(),
-        uid: "",
-        name: "Daily Workouts",
-        description: "",
-        category: TasksProvider.tempCat,
-        timestampCreated: DateTime.now().add(Duration(minutes: 3)),
-        dueDate: DateTime.now(),
-        intervalDuration: Duration(days: 1),
-      ),
-    ];
-  }
+  _DailyViewPreviewState createState() => _DailyViewPreviewState();
 }
 
-class _DailyViewTutorialState extends State<DailyViewTutorial> {
+class _DailyViewPreviewState extends State<DailyViewPreview> {
   double tutorialCurrentPage = 0;
   final PageController tutorialPageController = PageController();
 
@@ -79,11 +42,47 @@ class _DailyViewTutorialState extends State<DailyViewTutorial> {
     super.dispose();
   }
 
+  List<Task> _getTutorialTasks() {
+    return [
+      Task(
+        id: UniqueKey().toString(),
+        uid: "",
+        name: "Install do.sprav",
+        description: "",
+        category: TasksProvider.tempCat,
+        timestampCreated: DateTime.now(),
+        dueDate: DateTime.now(),
+        intervalDuration: Duration(days: 0),
+        isComplete: true,
+      ),
+      Task(
+        id: UniqueKey().toString(),
+        uid: "",
+        name: "Pass the tutorial",
+        description: "",
+        category: TasksProvider.tempCat,
+        timestampCreated: DateTime.now(),
+        dueDate: DateTime.now(),
+        intervalDuration: Duration(days: 0),
+      ),
+      Task(
+        id: UniqueKey().toString(),
+        uid: "",
+        name: "Daily Workouts",
+        description: "",
+        category: TasksProvider.tempCat,
+        timestampCreated: DateTime.now(),
+        dueDate: DateTime.now(),
+        intervalDuration: Duration(days: 1),
+      ),
+    ];
+  }
+
   List<Widget> _getPages() {
-    var tasks = DailyViewTutorial.getTutorialTasks();
-    tasks.sort();
+    var tasks = _getTutorialTasks();
 
     List<Widget> pages = [
+      _createMainDescriptionPage(),
       _createTapHintPage(tasks[1]),
       _createSwipeRightHintPage(tasks[1]),
       _createSwipeLeftHintPage(tasks[1]),
@@ -95,11 +94,32 @@ class _DailyViewTutorialState extends State<DailyViewTutorial> {
     return pages;
   }
 
+  Widget _createMainDescriptionPage() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: EdgeInsets.only(top: 15, left: 25, right: 25, bottom: 15),
+      child: SingleChildScrollView(
+        child: Text(
+          "The Daily List widget is a tool that helps you manage your daily routine and recurrent tasks.\nYou do not need to keep all these in your mind anymore since do.sprav application and Daily List widget, in particular, will manage them all for you.\nPlease look at the Tutorial to better familiarize yourself with Daily List functionality.",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Prompt",
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _createTapHintPage(Task task) {
     return Stack(
       children: [
         Positioned(
-          bottom: 0,
+          bottom: 15,
           left: 25,
           right: 20,
           child: Text(
@@ -140,7 +160,7 @@ class _DailyViewTutorialState extends State<DailyViewTutorial> {
     return Stack(
       children: [
         Positioned(
-          bottom: 0,
+          bottom: 15,
           left: 25,
           right: 20,
           child: Text(
@@ -210,7 +230,7 @@ class _DailyViewTutorialState extends State<DailyViewTutorial> {
     return Stack(
       children: [
         Positioned(
-          bottom: 0,
+          bottom: 15,
           left: 25,
           right: 20,
           child: Text(
@@ -443,85 +463,115 @@ class _DailyViewTutorialState extends State<DailyViewTutorial> {
   @override
   Widget build(BuildContext context) {
     List<Widget> pages = _getPages();
-    List<Task> tasks = DailyViewTutorial.getTutorialTasks();
-    return Column(
-      children: [
-        Expanded(
-          child: Stack(
-            children: [
-              DailyView(
-                demoItems: tasks,
-              ),
-              Container(
-                margin: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.withAlpha(180),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              Positioned(
-                child: Container(
-                  width: double.infinity,
-                  height: 350,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: EdgeInsets.all(10),
-                  child: PageView(
-                    controller: tutorialPageController,
-                    children: pages,
-                  ),
-                ),
-              ),
-            ],
-          ),
+
+    return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 105),
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(20),
+          color: Theme.of(context).colorScheme.secondaryContainer,
         ),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Row(
-            children: [
-              if (tutorialCurrentPage == 0) Spacer(),
-              if (tutorialCurrentPage > 0)
-                Expanded(
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        tutorialPageController.previousPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.linear,
-                        );
-                      },
-                      child: Text("Previous"),
+        height: 450,
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  DailyView(
+                    demoItems: _getTutorialTasks(),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey.withAlpha(180),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                ),
-              Expanded(
-                child: Center(
-                  child: ElevatedButton(
-                    onPressed: widget.onClose,
-                    child: Text("Close"),
-                  ),
-                ),
-              ),
-              if (tutorialCurrentPage < pages.length - 1)
-                Expanded(
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        tutorialPageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.linear,
-                        );
-                      },
-                      child: Text("Next"),
+                  Positioned(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      child: PageView(
+                        controller: tutorialPageController,
+                        children: pages,
+                      ),
                     ),
                   ),
-                ),
-              if (tutorialCurrentPage == pages.length - 1) Spacer(),
-            ],
-          ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Row(
+                children: [
+                  if (tutorialCurrentPage == 0)
+                    Expanded(
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Theme.of(context).colorScheme.secondary,
+                          ),
+                          child: Text(
+                            "Activate",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (tutorialCurrentPage > 0)
+                    Expanded(
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            tutorialPageController.previousPage(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.linear,
+                            );
+                          },
+                          child: Text("Previous"),
+                        ),
+                      ),
+                    ),
+                  Expanded(
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text("Close"),
+                      ),
+                    ),
+                  ),
+                  if (tutorialCurrentPage < pages.length - 1)
+                    Expanded(
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            tutorialPageController.nextPage(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.linear,
+                            );
+                          },
+                          child: Text("Next"),
+                        ),
+                      ),
+                    ),
+                  if (tutorialCurrentPage == pages.length - 1) Spacer(),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ import 'package:dosprav/screens/dashboard_screen.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/screens/task_compose_screen.dart';
 import 'package:dosprav/screens/task_detail_screen.dart';
+import 'package:dosprav/screens/daily_view_screen.dart';
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/providers/view_models_provider.dart';
 
@@ -57,13 +58,13 @@ class MyApp extends StatelessWidget {
                   fontSize: 22,
                   color: Colors.black,
                 ),
-//                backgroundColor: Color.fromARGB(255, 24, 179, 179),
               ),
         ),
         home: const MyHomePage(title: 'do.sprav'),
         routes: {
           TaskDetailScreen.routeName: (context) => TaskDetailScreen(),
           TaskComposeScreen.routeName: (context) => TaskComposeScreen(),
+          DailyViewScreen.routeName: (context) => DailyViewScreen(),
         },
       ),
     );
