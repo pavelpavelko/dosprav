@@ -8,8 +8,7 @@ import 'package:dosprav/widgets/daily_view.dart';
 import 'package:dosprav/widgets/daily_view_list_item.dart';
 
 class DailyViewPreview extends StatefulWidget {
-  const DailyViewPreview({Key? key})
-      : super(key: key);
+  const DailyViewPreview({Key? key}) : super(key: key);
 
   @override
   _DailyViewPreviewState createState() => _DailyViewPreviewState();
@@ -561,7 +560,9 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
                               curve: Curves.linear,
                             );
                           },
-                          child: Text("Next"),
+                          child: Text(
+                            tutorialCurrentPage == 0 ? "Tutorial" : "Next",
+                          ),
                         ),
                       ),
                     ),
