@@ -21,10 +21,6 @@ class TaskHelper {
     return cuttedFirst.isBefore(cuttedSecond) ? -1 : 1;
   }
 
-  static String formatIntervalDuration(Duration interval) {
-    return IntervalModel.getIntervalModelByDuration(interval).name;
-  }
-
   static Future<bool?> showDeleteConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -46,29 +42,5 @@ class TaskHelper {
         ],
       ),
     );
-  }
-}
-
-class IntervalModel {
-  const IntervalModel(this.name, this.interval);
-  final String name;
-  final Duration interval;
-
-  @override
-  String toString() => name;
-
-  static const List<IntervalModel> intervals = <IntervalModel>[
-    IntervalModel("Once", Duration(days: 0)),
-    IntervalModel("Everyday", Duration(days: 1)),
-    IntervalModel("Every 2 days", Duration(days: 2)),
-    IntervalModel("Semiweekly", Duration(days: 3)),
-    IntervalModel("Weekly", Duration(days: 7)),
-    IntervalModel("Semimonthly", Duration(days: 14)),
-    IntervalModel("Every 3 weeks", Duration(days: 21)),
-    IntervalModel("Monthly", Duration(days: 30)),
-  ];
-
-  static IntervalModel getIntervalModelByDuration(Duration interval) {
-    return intervals.firstWhere((element) => element.interval == interval);
   }
 }

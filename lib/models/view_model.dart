@@ -8,6 +8,7 @@ class ViewModel {
   final bool isActivated;
   final String description;
   final Widget Function() createViewPreview;
+  final String viewScreenRouteName;
 
   ViewModel({
     required this.id,
@@ -17,6 +18,7 @@ class ViewModel {
     this.isActivated = false,
     required this.description,
     required this.createViewPreview,
+    required this.viewScreenRouteName,
   });
 
   ViewModel.fromViewModel({
@@ -28,6 +30,6 @@ class ViewModel {
         imageUrl = origin.imageUrl,
         description = origin.description,
         createViewPreview = origin.createViewPreview,
+        viewScreenRouteName = origin.viewScreenRouteName,
         isActivated = isActivated ?? origin.isActivated;
 }
-

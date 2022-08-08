@@ -26,8 +26,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     final taskId = routeArgs["taskId"];
     assert(taskId != null);
 
-    final task =
-        Provider.of<TasksProvider>(context, listen: false).getTaskById(taskId!);
+    final tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+    final task = tasksProvider.getTaskById(taskId!);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,8 +59,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         onPressed: () {
                           final updatedTask = Task.fromTask(
                               origin: task, isComplete: !task.isComplete);
-                          Provider.of<TasksProvider>(context, listen: false)
-                              .updateTask(updatedTask);
+                          tasksProvider.updateTask(updatedTask);
                           Navigator.of(context).pop();
                         },
                         child: Text(
@@ -92,8 +91,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 Duration(days: 7),
                               ),
                             );
-                            Provider.of<TasksProvider>(context, listen: false)
-                                .updateTask(updatedTask);
+                            tasksProvider.updateTask(updatedTask);
                             Navigator.of(context).pop();
                           },
                           child: Text("Postpone"),
@@ -133,8 +131,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           TaskHelper.showDeleteConfirmationDialog(context)
                               .then((shouldDelete) {
                             if (shouldDelete != null && shouldDelete) {
-                              Provider.of<TasksProvider>(context, listen: false)
-                                  .removeTask(task.id);
+                              tasksProvider.removeTask(task.id);
                               Navigator.of(context).pop();
                             }
                           });

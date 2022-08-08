@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'package:dosprav/models/task.dart';
-import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/widgets/daily_view.dart';
 import 'package:dosprav/widgets/daily_view_list_item.dart';
+import 'package:dosprav/providers/categories_provider.dart';
 
 class DailyViewPreview extends StatefulWidget {
   const DailyViewPreview({Key? key}) : super(key: key);
@@ -48,10 +48,11 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
         uid: "",
         name: "Install do.sprav",
         description: "",
-        category: TasksProvider.tempCat,
+        categoryId: CategoriesProvider.tempStudyCategoryId,
         timestampCreated: DateTime.now(),
         dueDate: DateTime.now(),
         intervalDuration: Duration(days: 0),
+        priorityOrder: 3,
         isComplete: true,
       ),
       Task(
@@ -59,20 +60,22 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
         uid: "",
         name: "Pass the tutorial",
         description: "",
-        category: TasksProvider.tempCat,
+        categoryId: CategoriesProvider.tempStudyCategoryId,
         timestampCreated: DateTime.now(),
         dueDate: DateTime.now(),
         intervalDuration: Duration(days: 0),
+        priorityOrder: 1,
       ),
       Task(
         id: UniqueKey().toString(),
         uid: "",
         name: "Daily Workouts",
         description: "",
-        category: TasksProvider.tempCat,
+        categoryId: CategoriesProvider.tempStudyCategoryId,
         timestampCreated: DateTime.now(),
         dueDate: DateTime.now(),
         intervalDuration: Duration(days: 1),
+        priorityOrder: 0,
       ),
     ];
   }

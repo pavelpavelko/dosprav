@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/helpers/task_helper.dart';
-
-import 'package:dosprav/widgets/interval_picker_dialog.dart';
+import 'package:dosprav/widgets/picker_dialog.dart';
+import 'package:dosprav/providers/categories_provider.dart';
+import 'package:dosprav/models/category.dart';
 
 class TaskCompose extends StatefulWidget {
   const TaskCompose({Key? key, this.taskId, this.updateTaskChanged})
@@ -32,6 +33,7 @@ class TaskComposeState extends State<TaskCompose> {
 
   DateTime _dueDate = DateTime.now();
   Duration _intervalDuration = Duration(days: 0);
+  Category? _category;
 
   bool _isNameLongEnought = true;
 
@@ -41,13 +43,21 @@ class TaskComposeState extends State<TaskCompose> {
 
     _tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
+    var categoriesProvider =
+        Provider.of<CategoriesProvider>(context, listen: false);
+
+    String categoryId = CategoriesProvider.tempDailyCategoryId;
+
     if (widget.taskId != null) {
       _taskToEdit = _tasksProvider!.getTaskById(widget.taskId!);
       _dueDate = _taskToEdit!.dueDate;
       _intervalDuration = _taskToEdit!.intervalDuration;
       _taskNameController.text = _taskToEdit!.name;
       _taskDescriptionController.text = _taskToEdit!.description;
+      categoryId = _taskToEdit!.categoryId;
     }
+
+    _category = categoriesProvider.getById(categoryId);
   }
 
   @override
@@ -72,7 +82,8 @@ class TaskComposeState extends State<TaskCompose> {
           name: _taskNameController.text.trim(),
           description: _taskDescriptionController.text.trim(),
           dueDate: _dueDate,
-          intervalDuration: _intervalDuration);
+          intervalDuration: _intervalDuration,
+          categoryId: _category!.id);
       _tasksProvider!.updateTask(newTask);
     } else {
       newTask = Task(
@@ -83,7 +94,7 @@ class TaskComposeState extends State<TaskCompose> {
         dueDate: _dueDate,
         intervalDuration: _intervalDuration,
         timestampCreated: DateTime.now(),
-        category: TasksProvider.tempCat,
+        categoryId: _category!.id,
       );
       _tasksProvider!.addTask(newTask);
     }
@@ -99,7 +110,8 @@ class TaskComposeState extends State<TaskCompose> {
     if (_taskNameController.text != _taskToEdit!.name ||
         _taskDescriptionController.text != _taskToEdit!.description ||
         TaskHelper.compareDatesByDays(_dueDate, _taskToEdit!.dueDate) != 0 ||
-        _intervalDuration != _taskToEdit!.intervalDuration) {
+        _intervalDuration != _taskToEdit!.intervalDuration ||
+        _category!.id != _taskToEdit!.categoryId) {
       return true;
     }
 
@@ -108,9 +120,11 @@ class TaskComposeState extends State<TaskCompose> {
 
   @override
   Widget build(BuildContext context) {
-
     final FocusNode descriptionFocusNode = FocusNode();
-    
+
+    final categoriesProvider =
+        Provider.of<CategoriesProvider>(context, listen: false);
+
     return Column(
       children: [
         Padding(
@@ -259,13 +273,14 @@ class TaskComposeState extends State<TaskCompose> {
                     showDialog(
                         context: context,
                         builder: (ctx) {
-                          return IntervalPickerDialog(
-                            selectedItem:
-                                IntervalModel.getIntervalModelByDuration(
-                                    _intervalDuration),
+                          return PickerDialog<IntervalModel>(
+                            title: "Pick an interval for the task",
+                            items: IntervalModel.intervals,
+                            selectedItem: IntervalModel.getIntervalModel(
+                                _intervalDuration),
                             onCancel: () =>
                                 FocusManager.instance.primaryFocus?.unfocus(),
-                            onConfirm: (value) {
+                            onConfirm: (dynamic value) {
                               setState(() {
                                 _intervalDuration = value.interval;
                                 if (widget.updateTaskChanged != null) {
@@ -279,7 +294,7 @@ class TaskComposeState extends State<TaskCompose> {
                         });
                   },
                   child: Text(
-                    TaskHelper.formatIntervalDuration(_intervalDuration),
+                    IntervalModel.getIntervalModel(_intervalDuration).name,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.normal,
@@ -311,9 +326,30 @@ class TaskComposeState extends State<TaskCompose> {
                 width: 5,
               ),
               TextButton(
-                onPressed: null,
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        return PickerDialog<Category>(
+                          title: "Pick a category of the task",
+                          items: categoriesProvider.items,
+                          selectedItem: _category!,
+                          onCancel: () =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                          onConfirm: (dynamic value) {
+                            setState(() {
+                              _category = value;
+                              if (widget.updateTaskChanged != null) {
+                                widget.updateTaskChanged!(checkIsTaskChanged());
+                              }
+                            });
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                        );
+                      });
+                },
                 child: Text(
-                  _taskToEdit != null ? _taskToEdit!.category.name : "TODO",
+                  _category!.name,
                   style: TextStyle(
                     fontSize: 20,
                   ),

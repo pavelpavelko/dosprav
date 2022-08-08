@@ -13,6 +13,7 @@ import 'package:dosprav/screens/task_detail_screen.dart';
 import 'package:dosprav/screens/daily_view_screen.dart';
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/providers/view_models_provider.dart';
+import 'package:dosprav/screens/categories_table_view_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
           TaskDetailScreen.routeName: (context) => TaskDetailScreen(),
           TaskComposeScreen.routeName: (context) => TaskComposeScreen(),
           DailyViewScreen.routeName: (context) => DailyViewScreen(),
+          CategoriesTableViewScreen.routeName:(context) => CategoriesTableViewScreen(),
         },
       ),
     );

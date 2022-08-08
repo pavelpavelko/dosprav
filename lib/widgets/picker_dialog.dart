@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 
-import 'package:dosprav/helpers/task_helper.dart';
-
-class IntervalPickerDialog extends StatefulWidget {
-  const IntervalPickerDialog({
+class PickerDialog<T> extends StatefulWidget {
+  const PickerDialog({
     Key? key,
+    required this.title,
+    required this.items,
     required this.selectedItem,
     required this.onCancel,
     required this.onConfirm,
   }) : super(key: key);
 
-  final IntervalModel selectedItem;
+  final String title;
+  final T selectedItem;
+  final List<T> items;
 
   final Function onCancel;
-  final Function(IntervalModel value) onConfirm;
+  final void Function(T) onConfirm;
 
   @override
-  _IntervalPickerDialogState createState() => _IntervalPickerDialogState();
+  _PickerDialogState createState() => _PickerDialogState<T>();
 }
 
-class _IntervalPickerDialogState extends State<IntervalPickerDialog> {
-  IntervalModel? _selectedInterval;
+class _PickerDialogState<T> extends State<PickerDialog> {
+  T? _selectedItem;
 
   @override
   void initState() {
-    _selectedInterval = widget.selectedItem;
+    _selectedItem = widget.selectedItem;
     super.initState();
   }
 
@@ -50,7 +52,7 @@ class _IntervalPickerDialogState extends State<IntervalPickerDialog> {
               ),
             ),
             child: Text(
-              "Pick an interval for the task",
+              widget.title,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 20,
@@ -61,16 +63,16 @@ class _IntervalPickerDialogState extends State<IntervalPickerDialog> {
             child: SingleChildScrollView(
               padding: EdgeInsets.only(top: 10),
               child: Column(
-                children: IntervalModel.intervals.map(
+                children: widget.items.map(
                   (item) {
-                    return RadioListTile<IntervalModel>(
-                      title: Text(item.name),
+                    return RadioListTile<T>(
+                      title: Text(item.toString()),
                       value: item,
-                      groupValue: _selectedInterval,
+                      groupValue: _selectedItem,
                       onChanged: (value) {
                         if (value != null) {
                           setState(() {
-                            _selectedInterval = value;
+                            _selectedItem = value;
                           });
                         }
                       },
@@ -98,7 +100,7 @@ class _IntervalPickerDialogState extends State<IntervalPickerDialog> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: TextButton(
                   onPressed: () {
-                    widget.onConfirm(_selectedInterval!);
+                    widget.onConfirm(_selectedItem!);
                     Navigator.of(context).pop(true);
                   },
                   child: Text("OK"),
@@ -109,5 +111,31 @@ class _IntervalPickerDialogState extends State<IntervalPickerDialog> {
         ],
       ),
     );
+  }
+}
+
+class IntervalModel {
+  const IntervalModel(this.name, this.interval);
+  final String name;
+  final Duration interval;
+
+  @override
+  String toString() {
+    return name;
+  }
+
+  static const List<IntervalModel> intervals = <IntervalModel>[
+    IntervalModel("Once", Duration(days: 0)),
+    IntervalModel("Everyday", Duration(days: 1)),
+    IntervalModel("Every 2 days", Duration(days: 2)),
+    IntervalModel("Semiweekly", Duration(days: 3)),
+    IntervalModel("Weekly", Duration(days: 7)),
+    IntervalModel("Semimonthly", Duration(days: 14)),
+    IntervalModel("Every 3 weeks", Duration(days: 21)),
+    IntervalModel("Monthly", Duration(days: 30)),
+  ];
+
+  static IntervalModel getIntervalModel(Duration interval) {
+    return intervals.firstWhere((element) => element.interval == interval);
   }
 }

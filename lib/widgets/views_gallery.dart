@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dosprav/providers/view_models_provider.dart';
-import 'package:dosprav/screens/daily_view_screen.dart';
 import 'package:dosprav/widgets/views_gallery_item.dart';
 
 class ViewsGallery extends StatelessWidget {
@@ -24,7 +23,7 @@ class ViewsGallery extends StatelessWidget {
       children: views.map((viewModel) {
         return ViewsGalleryItem(
           viewModel: viewModel,
-          viewScreenRouteName: DailyViewScreen.routeName,
+          viewScreenRouteName: viewModel.viewScreenRouteName,
         );
       }).toList(),
     );

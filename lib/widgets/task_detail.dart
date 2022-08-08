@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/helpers/task_helper.dart';
+import 'package:dosprav/providers/categories_provider.dart';
+import 'package:dosprav/widgets/picker_dialog.dart';
 
 class TaskDetail extends StatelessWidget {
   const TaskDetail({Key? key, required this.taskId}) : super(key: key);
@@ -14,6 +16,9 @@ class TaskDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final Task task =
         Provider.of<TasksProvider>(context, listen: false).getTaskById(taskId);
+
+    final categoriesProvider =
+        Provider.of<CategoriesProvider>(context, listen: false);
 
     return Column(
       children: [
@@ -121,7 +126,7 @@ class TaskDetail extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(right: 10),
                 child: Text(
-                  TaskHelper.formatIntervalDuration(task.intervalDuration),
+                  IntervalModel.getIntervalModel(task.intervalDuration).name,
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -151,11 +156,11 @@ class TaskDetail extends StatelessWidget {
                 width: 5,
               ),
               Text(
-                  task.category.name,
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                categoriesProvider.getById(task.categoryId).name,
+                style: TextStyle(
+                  fontSize: 20,
                 ),
+              ),
             ],
           ),
         ),

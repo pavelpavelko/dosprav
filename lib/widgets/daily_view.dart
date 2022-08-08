@@ -7,6 +7,8 @@ import 'package:dosprav/helpers/task_helper.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/widgets/daily_view_list_item.dart';
+import 'package:dosprav/models/category.dart';
+import 'package:dosprav/providers/categories_provider.dart';
 
 class DailyView extends StatefulWidget {
   const DailyView({
@@ -42,8 +44,9 @@ class _DailyViewState extends State<DailyView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Task> items = widget.demoItems ?? Provider.of<TasksProvider>(context).items;
-    items.sort();
+
+    Category dailyCategory = Provider.of<CategoriesProvider>(context, listen: false).getById(CategoriesProvider.tempDailyCategoryId);
+    List<Task> items = widget.demoItems ?? Provider.of<TasksProvider>(context).categorizedMap[dailyCategory.id]!;
 
     return Card(
       margin: EdgeInsets.all(10),
