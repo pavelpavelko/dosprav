@@ -3,25 +3,29 @@ class Category implements Comparable {
   final String uid;
   final String name;
   final bool isActive;
-  final int priorityOrder;
+  final double priorityOrder;
+  final bool isEditable;
 
   Category({
     required this.id,
     required this.uid,
     required this.name,
     this.isActive = false,
-    required this.priorityOrder,
+    this.priorityOrder = double.maxFinite,
+    this.isEditable = true,
   });
 
   Category.fromCategory({
     required Category origin,
     String? name,
     bool? isActive,
-    int? priorityOrder,
+    double? priorityOrder,
+    bool? isEditable,
   })  : id = origin.id,
         uid = origin.uid,
         name = name ?? origin.name,
         isActive = isActive ?? origin.isActive,
+        isEditable = isEditable ?? origin.isEditable,
         priorityOrder = priorityOrder ?? origin.priorityOrder;
 
   @override

@@ -20,7 +20,7 @@ class Task implements Comparable {
     this.isComplete = false,
     required this.categoryId,
     required this.intervalDuration,
-    this.priorityOrder = double.infinity,
+    this.priorityOrder = double.maxFinite,
   });
 
   Task.fromTask({

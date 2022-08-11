@@ -7,6 +7,7 @@ import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/models/category.dart';
+import 'package:dosprav/widgets/categories_table_header_item.dart';
 
 class CategoriesTableView extends StatefulWidget {
   const CategoriesTableView({
@@ -25,8 +26,6 @@ class CategoriesTableView extends StatefulWidget {
 }
 
 class _CategoriesTableViewState extends State<CategoriesTableView> {
-  final double _cellSize = 50;
-
   bool _isCompletedVisible = false;
   bool _isCarouselModeOn = false;
   bool _isEditModeOn = false;
@@ -50,16 +49,17 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
     var tasksProvider = Provider.of<TasksProvider>(context, listen: true);
 
     var filteredTasks = filterByCompleteness(tasks);
+    // ignore: sized_box_for_whitespace
     return Container(
       key: UniqueKey(),
       width: 140,
-      margin: EdgeInsets.all(3),
       child: Card(
         color: Theme.of(context).colorScheme.secondaryContainer,
         child: ReorderableListView(
           proxyDecorator: _taskProxyDecorator,
           padding: EdgeInsets.all(5),
-          header: _createColumnHeader(category),
+          header: CategoriesTableHeaderItem(
+              categoryId: category.id, isEditModeOn: _isEditModeOn),
           children: <Widget>[
             for (var task in filteredTasks) _createTableItem(task),
           ],
@@ -103,27 +103,6 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
         padding: EdgeInsets.all(0),
         child: CategoriesTableItem(
           task: task,
-        ),
-      ),
-    );
-  }
-
-  Widget _createColumnHeader(Category category) {
-    return Card(
-      color: Theme.of(context).colorScheme.secondary,
-      child: Container(
-        padding: EdgeInsets.all(5),
-        height: 60,
-        alignment: Alignment.center,
-        child: Text(
-          category.name,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: "Prompt",
-            fontSize: 15,
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ),
     );
@@ -255,27 +234,36 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
               ),
             ),
             Expanded(
-              child: ReorderableListView(
-                scrollDirection: Axis.horizontal,
-                proxyDecorator: _columnProxyDecorator,
-                children: <Widget>[
-                  for (var category in categories)
-                    _createCategoryColumn(
-                      context,
-                      category,
-                      categorizedMap[category.id] != null
-                          ? categorizedMap[category.id]!
-                          : [],
-                    ),
-                ],
-                onReorder: (int oldIndex, int newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    categoriesProvider.updateOrderIndex(oldIndex, newIndex);
-                  });
-                },
+              child: Padding(
+                padding: EdgeInsets.all(5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                  child: ReorderableListView(
+                    scrollDirection: Axis.horizontal,
+                    proxyDecorator: _columnProxyDecorator,
+                    children: <Widget>[
+                      for (var category in categories)
+                        _createCategoryColumn(
+                          context,
+                          category,
+                          categorizedMap[category.id] != null
+                              ? categorizedMap[category.id]!
+                              : [],
+                        ),
+                    ],
+                    onReorder: (int oldIndex, int newIndex) {
+                      setState(() {
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
+                        categoriesProvider.updateOrderIndex(oldIndex, newIndex);
+                      });
+                    },
+                  ),
+                ),
               ),
             ),
           ],

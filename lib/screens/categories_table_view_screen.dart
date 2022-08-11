@@ -6,6 +6,7 @@ import 'package:dosprav/providers/view_models_provider.dart';
 import 'package:dosprav/models/view_model.dart';
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/categories_table_view.dart';
+import 'package:dosprav/widgets/category_compose.dart';
 
 class CategoriesTableViewScreen extends StatefulWidget {
   static const String routeName = "/categories-table-view";
@@ -33,6 +34,24 @@ class _CategoriesTableViewScreenState extends State<CategoriesTableViewScreen> {
       appBar: AppBar(
         title: Text("Categories Table"),
         actions: [
+          CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(200),
+            radius: 12,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => CategoryCompose(),
+                );
+              },
+              icon: Icon(
+                Icons.add_circle_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 20,
+              ),
+            ),
+          ),
           PopupMenuButton<String>(
             onSelected: (String item) {
               switch (item) {
@@ -45,12 +64,22 @@ class _CategoriesTableViewScreenState extends State<CategoriesTableViewScreen> {
                   );
                   Navigator.of(context).pop();
                   break;
+                case "Create":
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => CategoryCompose(),
+                  );
+                  break;
               }
             },
             itemBuilder: (context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: "Postpone",
                 child: Text("Postpone"),
+              ),
+              PopupMenuItem<String>(
+                value: "Create",
+                child: Text("Create"),
               ),
             ],
           ),

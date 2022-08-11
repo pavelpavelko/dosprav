@@ -104,13 +104,13 @@ class AuthFormState extends State<AuthForm> {
             onPressed: () {
               Navigator.of(context).pop(null);
             },
-            child: Text("Cancel"),
+            child: Text("CANCEL"),
           ),
           ElevatedButton(
             onPressed: () {
               _onForgotEmailSendPressed();
             },
-            child: Text("Send"),
+            child: Text("SEND"),
           ),
         ],
       ),

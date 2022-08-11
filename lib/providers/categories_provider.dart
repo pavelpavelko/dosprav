@@ -6,6 +6,7 @@ class CategoriesProvider with ChangeNotifier {
   static final String tempStudyCategoryId = UniqueKey().toString();
   static final String tempDailyCategoryId = UniqueKey().toString();
   static final String tempAppDevelopmentCategoryId = UniqueKey().toString();
+  static final String tempAtticCategoryId = UniqueKey().toString();
 
   List<Category> _items = [
     Category(
@@ -13,6 +14,7 @@ class CategoriesProvider with ChangeNotifier {
       uid: "",
       name: "Daily List",
       priorityOrder: 0,
+      isEditable: false,
     ),
     Category(
       id: tempAppDevelopmentCategoryId,
@@ -26,6 +28,13 @@ class CategoriesProvider with ChangeNotifier {
       name: "Study",
       priorityOrder: 2,
     ),
+    Category(
+      id: tempAtticCategoryId,
+      uid: "",
+      name: "Attic",
+      priorityOrder: 3,
+      isEditable: false,
+    ),
   ];
 
   List<Category> get items {
@@ -38,18 +47,37 @@ class CategoriesProvider with ChangeNotifier {
     return items;
   }
 
-  void addCategoty(Category category) {
+  void addCategory(Category category) {
     _items.add(category);
-    notifyListeners();
+    _updatePriorityOrders();
   }
 
   void removeCategory(String id) {
     _items.removeWhere((element) => element.id == id);
-    notifyListeners();
+    _updatePriorityOrders();
   }
 
   Category getById(String id) {
     return _items.firstWhere((element) => element.id == id);
+  }
+
+  void updateCategory(Category updatedCategory) {
+    var index =
+        _items.indexWhere((category) => category.id == updatedCategory.id);
+    _items[index] = updatedCategory;
+    _updatePriorityOrders();
+  }
+
+  void _updatePriorityOrders({List<Category>? itemsToUpdate}) {
+    var newItems = itemsToUpdate ?? itemsSorted;
+    for (int index = 0; index < newItems.length; index++) {
+      newItems[index] = Category.fromCategory(
+        origin: newItems[index],
+        priorityOrder: index.toDouble(),
+      );
+    }
+    _items = newItems;
+    notifyListeners();
   }
 
   void updateOrderIndex(int oldIndex, int newIndex) {
@@ -57,12 +85,6 @@ class CategoriesProvider with ChangeNotifier {
     final Category item = newItems.removeAt(oldIndex);
     newItems.insert(newIndex, item);
 
-    for (int index = 0; index < newItems.length; index++) {
-      newItems[index] =
-          Category.fromCategory(origin: newItems[index], priorityOrder: index);
-    }
-
-    _items = newItems;
-    notifyListeners();
+    _updatePriorityOrders(itemsToUpdate: newItems);
   }
 }
