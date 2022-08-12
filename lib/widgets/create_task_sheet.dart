@@ -152,12 +152,17 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
       key: _stackKey,
       children: [
         if (widget.emergenceType == EmergenceType.cover)
-          Container(
-            alignment: Alignment.center,
-            width: double.infinity,
-//            color: Theme.of(context).colorScheme.secondaryContainer,
-            color: Colors.white24,
-            child: widget.child,
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              _controller?.reverse();
+            },
+            child: Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              color: Colors.white24,
+              child: widget.child,
+            ),
           ),
         if (widget.emergenceType == EmergenceType.cover)
           Positioned(
@@ -182,7 +187,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                 child: Container(
                   alignment: Alignment.center,
                   width: double.infinity,
-//                  color: Theme.of(context).colorScheme.secondaryContainer,
                   child: widget.child,
                 ),
               ),

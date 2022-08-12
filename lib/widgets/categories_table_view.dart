@@ -2,12 +2,15 @@ import 'package:dosprav/widgets/categories_table_item.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/models/category.dart';
 import 'package:dosprav/widgets/categories_table_header_item.dart';
+import 'package:dosprav/widgets/daily_view_list_item.dart';
 
 class CategoriesTableView extends StatefulWidget {
   const CategoriesTableView({
@@ -30,6 +33,10 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
   bool _isCarouselModeOn = false;
   bool _isEditModeOn = false;
 
+  final CarouselController _carouselController = CarouselController();
+
+  int _carouselCurrentPage = 0;
+
   @override
   void initState() {
     super.initState();
@@ -45,14 +52,33 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
   }
 
   Widget _createCategoryColumn(
-      BuildContext context, Category category, List<Task> tasks) {
+    BuildContext context,
+    Category category,
+    List<Task> tasks,
+  ) {
     var tasksProvider = Provider.of<TasksProvider>(context, listen: true);
+    var categoriesProvider =
+        Provider.of<CategoriesProvider>(context, listen: false);
 
     var filteredTasks = filterByCompleteness(tasks);
+    double columnWidth;
+    double approxPaddingSum = 30;
+    if (_isCarouselModeOn) {
+      columnWidth = double.infinity;
+    } else {
+      if (categoriesProvider.items.length == 2) {
+        columnWidth =
+            (MediaQuery.of(context).size.width - approxPaddingSum) / 2;
+      } else {
+        columnWidth =
+            (MediaQuery.of(context).size.width - approxPaddingSum) / 2.5;
+      }
+    }
+
     // ignore: sized_box_for_whitespace
     return Container(
       key: UniqueKey(),
-      width: 140,
+      width: columnWidth,
       child: Card(
         color: Theme.of(context).colorScheme.secondaryContainer,
         child: ReorderableListView(
@@ -77,6 +103,27 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
     );
   }
 
+  List<Widget> _createColumnsList() {
+    List<Widget> result = [];
+    var categories =
+        Provider.of<CategoriesProvider>(context, listen: false).itemsSorted;
+    var categorizedMap =
+        Provider.of<TasksProvider>(context, listen: false).categorizedMap;
+
+    for (var category in categories) {
+      result.add(
+        _createCategoryColumn(
+          context,
+          category,
+          categorizedMap[category.id] != null
+              ? categorizedMap[category.id]!
+              : [],
+        ),
+      );
+    }
+    return result;
+  }
+
   Widget _columnProxyDecorator(
       Widget child, int index, Animation<double> animation) {
     return Card(
@@ -90,6 +137,9 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
       Widget child, int index, Animation<double> animation) {
     return Card(
       elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
       margin: EdgeInsets.all(1),
       color: Colors.white70,
       child: child,
@@ -98,12 +148,105 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
 
   Widget _createTableItem(Task task) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
       key: UniqueKey(),
       child: Padding(
         padding: EdgeInsets.all(0),
-        child: CategoriesTableItem(
-          task: task,
-        ),
+        child: _isCarouselModeOn
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: DailyViewListItem(
+                  task: task,
+                ),
+              )
+            : CategoriesTableItem(
+                task: task,
+              ),
+      ),
+    );
+  }
+
+  Widget _createCarousel() {
+    var categoriesProvider =
+        Provider.of<CategoriesProvider>(context, listen: true);
+
+    return SingleChildScrollView(
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 7),
+                child: AnimatedSmoothIndicator(
+                  activeIndex: _carouselCurrentPage,
+                  count: categoriesProvider.items.length,
+                  effect: WormEffect(
+                    dotWidth: 14,
+                    dotHeight: 14,
+                    activeDotColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                  onDotClicked: (index) {
+                    setState(() {
+                      _carouselCurrentPage = index;
+                      _carouselController.animateToPage(_carouselCurrentPage);
+                    });
+                  },
+                ),
+              ),
+              CarouselSlider(
+                items: _createColumnsList(),
+                carouselController: _carouselController,
+                options: CarouselOptions(
+                  autoPlay: false,
+                  enableInfiniteScroll: false,
+                  enlargeCenterPage: true,
+                  viewportFraction: 0.8,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _carouselCurrentPage = index;
+                    });
+                  },
+                  aspectRatio: 3 / 3.8,
+                  initialPage: _carouselCurrentPage,
+                ),
+              ),
+            ],
+          ),
+          if (_carouselCurrentPage > 0)
+            Positioned(
+              left: -5,
+              top: -5,
+              child: IconButton(
+                iconSize: 35,
+                onPressed: () {
+                  _carouselController.previousPage();
+                },
+                icon: Icon(
+                  Icons.arrow_circle_left,
+                  color: Theme.of(context).colorScheme.primary.withAlpha(200),
+                ),
+              ),
+            ),
+          if (_carouselCurrentPage < categoriesProvider.items.length - 1)
+            Positioned(
+              right: -5,
+              top: -5,
+              child: IconButton(
+                iconSize: 35,
+                onPressed: () {
+                  _carouselController.nextPage();
+                },
+                icon: Icon(
+                  Icons.arrow_circle_right,
+                  color: Theme.of(context).colorScheme.primary.withAlpha(200),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -112,9 +255,6 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
   Widget build(BuildContext context) {
     var categoriesProvider =
         Provider.of<CategoriesProvider>(context, listen: true);
-    var categorizedMap =
-        Provider.of<TasksProvider>(context, listen: true).categorizedMap;
-    var categories = categoriesProvider.itemsSorted;
 
     return Card(
       margin: EdgeInsets.all(10),
@@ -241,28 +381,22 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
-                  child: ReorderableListView(
-                    scrollDirection: Axis.horizontal,
-                    proxyDecorator: _columnProxyDecorator,
-                    children: <Widget>[
-                      for (var category in categories)
-                        _createCategoryColumn(
-                          context,
-                          category,
-                          categorizedMap[category.id] != null
-                              ? categorizedMap[category.id]!
-                              : [],
+                  child: _isCarouselModeOn
+                      ? _createCarousel()
+                      : ReorderableListView(
+                          scrollDirection: Axis.horizontal,
+                          proxyDecorator: _columnProxyDecorator,
+                          children: _createColumnsList(),
+                          onReorder: (int oldIndex, int newIndex) {
+                            setState(() {
+                              if (oldIndex < newIndex) {
+                                newIndex -= 1;
+                              }
+                              categoriesProvider.updateOrderIndex(
+                                  oldIndex, newIndex);
+                            });
+                          },
                         ),
-                    ],
-                    onReorder: (int oldIndex, int newIndex) {
-                      setState(() {
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        categoriesProvider.updateOrderIndex(oldIndex, newIndex);
-                      });
-                    },
-                  ),
                 ),
               ),
             ),

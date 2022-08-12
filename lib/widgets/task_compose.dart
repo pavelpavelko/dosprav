@@ -46,7 +46,7 @@ class TaskComposeState extends State<TaskCompose> {
     var categoriesProvider =
         Provider.of<CategoriesProvider>(context, listen: false);
 
-    String categoryId = CategoriesProvider.tempDailyCategoryId;
+    String categoryId = categoriesProvider.itemsSorted.first.id;
 
     if (widget.taskId != null) {
       _taskToEdit = _tasksProvider!.getTaskById(widget.taskId!);

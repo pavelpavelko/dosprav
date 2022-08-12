@@ -10,11 +10,20 @@ class CategoriesTableItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 90,
-      alignment: Alignment.center,
-      padding: EdgeInsets.all(8),
-      child: GestureDetector(
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          TaskDetailScreen.routeName,
+          arguments: {
+            "taskId": task.id,
+          },
+        );
+      },
+      child: Container(
+        height: 90,
+        alignment: Alignment.center,
+        color: Colors.transparent,
+        padding: EdgeInsets.all(8),
         child: Text(
           task.name,
           overflow: TextOverflow.ellipsis,
@@ -26,14 +35,6 @@ class CategoriesTableItem extends StatelessWidget {
             decoration: task.isComplete ? TextDecoration.lineThrough : null,
           ),
         ),
-        onTap: () {
-          Navigator.of(context).pushNamed(
-            TaskDetailScreen.routeName,
-            arguments: {
-              "taskId": task.id,
-            },
-          );
-        },
       ),
     );
   }
