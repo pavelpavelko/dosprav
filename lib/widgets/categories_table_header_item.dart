@@ -24,7 +24,9 @@ class CategoriesTableHeaderItem extends StatelessWidget {
     var tasksProvider = Provider.of<TasksProvider>(context, listen: false);
 
     return Card(
+      elevation: 3,
       color: Theme.of(context).colorScheme.secondary,
+      margin: EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 10),
       child: Stack(
         children: [
           Container(
