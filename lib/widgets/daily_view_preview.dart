@@ -42,19 +42,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
   }
 
   List<Task> _getTutorialTasks() {
-    return [
-      Task(
-        id: UniqueKey().toString(),
-        uid: "",
-        name: "Install do.sprav",
-        description: "",
-        categoryId: CategoriesProvider.tempStudyCategoryId,
-        timestampCreated: DateTime.now(),
-        dueDate: DateTime.now(),
-        intervalDuration: Duration(days: 0),
-        priorityOrder: 3,
-        isComplete: true,
-      ),
+    var result = [
       Task(
         id: UniqueKey().toString(),
         uid: "",
@@ -78,6 +66,8 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
         priorityOrder: 0,
       ),
     ];
+    result.sort();
+    return result;
   }
 
   List<Widget> _getPages() {
