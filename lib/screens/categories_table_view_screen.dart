@@ -7,6 +7,8 @@ import 'package:dosprav/models/view_model.dart';
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/categories_table_view.dart';
 import 'package:dosprav/widgets/category_compose.dart';
+import 'package:dosprav/providers/home_slots_provider.dart';
+import 'package:dosprav/models/home_slot.dart';
 
 class CategoriesTableViewScreen extends StatefulWidget {
   static const String routeName = "/categories-table-view";
@@ -30,12 +32,16 @@ class _CategoriesTableViewScreenState extends State<CategoriesTableViewScreen> {
         Provider.of<ViewModelsProvider>(context, listen: false);
     final viewModel = viewModelsProvider.getViewModelById(viewModelId!);
 
+    final homeSlotsProvider =
+        Provider.of<HomeSlotsProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Categories Table"),
         actions: [
           CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(200),
+            backgroundColor:
+                Theme.of(context).colorScheme.primary.withAlpha(200),
             radius: 12,
             child: IconButton(
               padding: EdgeInsets.zero,
@@ -70,16 +76,33 @@ class _CategoriesTableViewScreenState extends State<CategoriesTableViewScreen> {
                     builder: (ctx) => CategoryCompose(),
                   );
                   break;
+                case "PushTable":
+                  HomeSlot slotToPush =
+                      HomeSlot(slotType: SlotType.categoriesTableView);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        homeSlotsProvider.getSnackBarMessage(
+                            context, slotToPush),
+                      ),
+                    ),
+                  );
+                  homeSlotsProvider.pushOnTop(slotToPush);
+                  break;
               }
             },
             itemBuilder: (context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
-                value: "Postpone",
-                child: Text("Postpone"),
+                value: "PushTable",
+                child: Text("Push on Top"),
               ),
               PopupMenuItem<String>(
                 value: "Create",
                 child: Text("Create"),
+              ),
+              PopupMenuItem<String>(
+                value: "Postpone",
+                child: Text("Postpone"),
               ),
             ],
           ),

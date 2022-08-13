@@ -17,6 +17,7 @@ class DailyView extends StatefulWidget {
     this.isNextWeekVisible = false,
     this.isSuggestedVisible = false,
     this.demoItems,
+    this.isShortMode = false,
   }) : super(key: key);
 
   final bool isCompleteVisible;
@@ -24,6 +25,8 @@ class DailyView extends StatefulWidget {
   final bool isSuggestedVisible;
 
   final List<Task>? demoItems;
+
+  final bool isShortMode;
 
   @override
   _DailyViewState createState() => _DailyViewState();
@@ -44,17 +47,23 @@ class _DailyViewState extends State<DailyView> {
 
   @override
   Widget build(BuildContext context) {
+    Category dailyCategory =
+        Provider.of<CategoriesProvider>(context, listen: false)
+            .getById(CategoriesProvider.tempDailyCategoryId);
+    List<Task> items = widget.demoItems ??
+        Provider.of<TasksProvider>(context).categorizedMap[dailyCategory.id]!;
 
-    Category dailyCategory = Provider.of<CategoriesProvider>(context, listen: false).getById(CategoriesProvider.tempDailyCategoryId);
-    List<Task> items = widget.demoItems ?? Provider.of<TasksProvider>(context).categorizedMap[dailyCategory.id]!;
+    var topPanelContainerSize = widget.isShortMode ? 28.0 : 35.0;
+    var topPanelIzonSize = widget.isShortMode ? 20.0 : 25.0;
 
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: widget.isShortMode ? 5 : 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             decoration: BoxDecoration(
@@ -64,15 +73,15 @@ class _DailyViewState extends State<DailyView> {
                 topRight: Radius.circular(20),
               ),
             ),
-            padding: EdgeInsets.all(5),
+            padding: EdgeInsets.all(widget.isShortMode ? 3 : 5),
             child: Row(
               children: [
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.all(2),
                     child: Container(
-                      width: 35,
-                      height: 35,
+                      width: topPanelContainerSize,
+                      height: topPanelContainerSize,
                       alignment: Alignment.center,
                       decoration: _isCompletedVisible
                           ? BoxDecoration(
@@ -82,7 +91,7 @@ class _DailyViewState extends State<DailyView> {
                           : null,
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        iconSize: 25,
+                        iconSize: topPanelIzonSize,
                         icon: Icon(
                           _isCompletedVisible
                               ? Icons.check_box
@@ -102,8 +111,8 @@ class _DailyViewState extends State<DailyView> {
                   child: Padding(
                     padding: EdgeInsets.all(2),
                     child: Container(
-                      width: 35,
-                      height: 35,
+                      width: topPanelContainerSize,
+                      height: topPanelContainerSize,
                       alignment: Alignment.center,
                       decoration: _isNextWeekVisible
                           ? BoxDecoration(
@@ -112,7 +121,7 @@ class _DailyViewState extends State<DailyView> {
                             )
                           : null,
                       child: IconButton(
-                        iconSize: 25,
+                        iconSize: topPanelIzonSize,
                         padding: EdgeInsets.zero,
                         icon: Icon(
                           _isNextWeekVisible
@@ -129,57 +138,65 @@ class _DailyViewState extends State<DailyView> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(2),
-                    child: Transform.rotate(
-                      angle: pi,
-                      child: Container(
-                        width: 35,
-                        height: 35,
-                        alignment: Alignment.center,
-                        decoration: _isSuggestedVisible
-                            ? BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                shape: BoxShape.circle,
-                              )
-                            : null,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          iconSize: 25,
-                          icon: Icon(
-                            _isSuggestedVisible
-                                ? Icons.wb_incandescent_rounded
-                                : Icons.wb_incandescent_outlined,
-                            color: Theme.of(context).colorScheme.secondary,
+                if (!widget.isShortMode)
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(2),
+                      child: Transform.rotate(
+                        angle: pi,
+                        child: Container(
+                          width: topPanelContainerSize,
+                          height: topPanelContainerSize,
+                          alignment: Alignment.center,
+                          decoration: _isSuggestedVisible
+                              ? BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                )
+                              : null,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            iconSize: topPanelIzonSize,
+                            icon: Icon(
+                              _isSuggestedVisible
+                                  ? Icons.wb_incandescent_rounded
+                                  : Icons.wb_incandescent_outlined,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isSuggestedVisible = !_isSuggestedVisible;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _isSuggestedVisible = !_isSuggestedVisible;
-                            });
-                          },
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
           Expanded(
             child: ListView(
+              padding: EdgeInsets.zero,
               children: ListTile.divideTiles(
-                  color: Theme.of(context).colorScheme.primary,
-                  tiles: items
-                      .where((task) => !task.isComplete || _isCompletedVisible)
-                      .where((task) {
-                    var durationDiff = _isNextWeekVisible
-                        ? Duration(days: 6)
-                        : Duration(days: 0);
-                    return TaskHelper.compareDatesByDays(
-                            task.dueDate, DateTime.now().add(durationDiff)) <=
-                        0;
-                  }).map((task) => DailyViewListItem(task: task))).toList(),
+                color: Theme.of(context).colorScheme.primary,
+                tiles: items
+                    .where((task) => !task.isComplete || _isCompletedVisible)
+                    .where((task) {
+                  var durationDiff = _isNextWeekVisible
+                      ? Duration(days: 6)
+                      : Duration(days: 0);
+                  return TaskHelper.compareDatesByDays(
+                          task.dueDate, DateTime.now().add(durationDiff)) <=
+                      0;
+                }).map(
+                  (task) => DailyViewListItem(
+                    task: task,
+                    isShortMode: widget.isShortMode,
+                  ),
+                ),
+              ).toList(),
             ),
           ),
         ],

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dosprav/widgets/create_task_sheet.dart';
-import 'package:dosprav/widgets/daily_view.dart';
+import 'package:dosprav/widgets/home_slots.dart';
 import 'package:dosprav/widgets/views_gallery.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedTabIndex = 0;
 
   static const List<Widget> _tabViews = <Widget>[
-    DailyView(),
+    HomeSlots(),
     ViewsGallery(),
     Center(
       child: ElevatedButton(
@@ -63,14 +63,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: CreateTaskSheet(
-        sheetTopBarColor: Theme.of(context).colorScheme.primary,
-        actionButtonFrameColor: Theme.of(context).colorScheme.secondary,
-        actionButtonColor: Theme.of(context).colorScheme.primary,
-        actionButtonSize: 60,
-        child: IndexedStack(
-          index: _selectedTabIndex,
-          children: _tabViews,
+      body: Padding(
+        padding: EdgeInsets.only(top: 0),
+        child: CreateTaskSheet(
+          sheetTopBarColor: Theme.of(context).colorScheme.primary,
+          actionButtonFrameColor: Theme.of(context).colorScheme.secondary,
+          actionButtonColor: Theme.of(context).colorScheme.primary,
+          actionButtonSize: 60,
+          child: IndexedStack(
+            index: _selectedTabIndex,
+            children: _tabViews,
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

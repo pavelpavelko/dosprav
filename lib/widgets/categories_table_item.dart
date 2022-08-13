@@ -4,9 +4,14 @@ import 'package:dosprav/models/task.dart';
 import 'package:dosprav/screens/task_detail_screen.dart';
 
 class CategoriesTableItem extends StatelessWidget {
-  const CategoriesTableItem({Key? key, required this.task}) : super(key: key);
+  const CategoriesTableItem({
+    Key? key,
+    required this.task,
+    this.isShortMode = false,
+  }) : super(key: key);
 
   final Task task;
+  final bool isShortMode;
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +25,15 @@ class CategoriesTableItem extends StatelessWidget {
         );
       },
       child: Container(
-        height: 90,
+        height: isShortMode ? 40 : 90,
         alignment: Alignment.center,
         color: Colors.transparent,
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(isShortMode ? 4 : 8),
         child: Text(
           task.name,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          maxLines: 2,
+          maxLines: isShortMode ? 1 : 2,
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.normal,

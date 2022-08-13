@@ -1,28 +1,25 @@
-import 'package:dosprav/widgets/categories_table_item.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import 'package:dosprav/providers/tasks_provider.dart';
-import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/categories_provider.dart';
-import 'package:dosprav/models/category.dart';
-import 'package:dosprav/widgets/categories_table_header_item.dart';
-import 'package:dosprav/widgets/daily_view_list_item.dart';
+import 'package:dosprav/widgets/category_list.dart';
 
 class CategoriesTableView extends StatefulWidget {
   const CategoriesTableView({
     Key? key,
     this.isCompletedVisible = false,
-    this.isCarouselModeOn = false,
-    this.isEditModeOn = false,
+    this.isCarouselMode = false,
+    this.isEditMode = false,
+    this.isShortMode = false,
   }) : super(key: key);
 
   final bool isCompletedVisible;
-  final bool isCarouselModeOn;
-  final bool isEditModeOn;
+  final bool isCarouselMode;
+  final bool isEditMode;
+  final bool isShortMode;
 
   @override
   _CategoriesTableViewState createState() => _CategoriesTableViewState();
@@ -30,8 +27,8 @@ class CategoriesTableView extends StatefulWidget {
 
 class _CategoriesTableViewState extends State<CategoriesTableView> {
   bool _isCompletedVisible = false;
-  bool _isCarouselModeOn = false;
-  bool _isEditModeOn = false;
+  bool _isCarouselMode = false;
+  bool _isEditMode = false;
 
   final CarouselController _carouselController = CarouselController();
 
@@ -41,29 +38,20 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
   void initState() {
     super.initState();
     _isCompletedVisible = widget.isCompletedVisible;
-    _isCarouselModeOn = widget.isCarouselModeOn;
-    _isEditModeOn = widget.isEditModeOn;
+    _isCarouselMode = widget.isCarouselMode;
+    _isEditMode = widget.isEditMode;
   }
 
-  List<Task> filterByCompleteness(List<Task> tasks) {
-    List<Task> filteredTasks =
-        tasks.where((task) => !task.isComplete || _isCompletedVisible).toList();
-    return filteredTasks;
-  }
+  List<Widget> _createColumnsList() {
+    List<Widget> result = [];
+    var categories =
+        Provider.of<CategoriesProvider>(context, listen: false).itemsSorted;
 
-  Widget _createCategoryColumn(
-    BuildContext context,
-    Category category,
-    List<Task> tasks,
-  ) {
-    var tasksProvider = Provider.of<TasksProvider>(context, listen: true);
-    var categoriesProvider =
-        Provider.of<CategoriesProvider>(context, listen: false);
+    var categoriesProvider = Provider.of<CategoriesProvider>(context);
 
-    var filteredTasks = filterByCompleteness(tasks);
     double columnWidth;
     double approxPaddingSum = 30;
-    if (_isCarouselModeOn) {
+    if (_isCarouselMode) {
       columnWidth = double.infinity;
     } else {
       if (categoriesProvider.items.length == 2) {
@@ -75,51 +63,18 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
       }
     }
 
-    // ignore: sized_box_for_whitespace
-    return Container(
-      key: UniqueKey(),
-      width: columnWidth,
-      child: Card(
-        color: Theme.of(context).colorScheme.secondaryContainer,
-        child: ReorderableListView(
-          proxyDecorator: _taskProxyDecorator,
-          padding: EdgeInsets.all(5),
-          header: CategoriesTableHeaderItem(
-              categoryId: category.id, isEditModeOn: _isEditModeOn),
-          children: <Widget>[
-            for (var task in filteredTasks) _createTableItem(task),
-          ],
-          onReorder: (int oldIndex, int newIndex) {
-            setState(() {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              tasksProvider.updateCategorizedOrderIndex(
-                  category.id, oldIndex, newIndex);
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _createColumnsList() {
-    List<Widget> result = [];
-    var categories =
-        Provider.of<CategoriesProvider>(context, listen: false).itemsSorted;
-    var categorizedMap =
-        Provider.of<TasksProvider>(context, listen: false).categorizedMap;
-
     for (var category in categories) {
-      result.add(
-        _createCategoryColumn(
-          context,
-          category,
-          categorizedMap[category.id] != null
-              ? categorizedMap[category.id]!
-              : [],
-        ),
+      var categoryList = CategoryList(
+        key: UniqueKey(),
+        categoryId: category.id,
+        isCompleteVisible: _isCompletedVisible,
+        isEditMode: _isEditMode,
+        width: columnWidth,
+        isShortMode: widget.isShortMode,
+        isCarouselMode: _isCarouselMode,
       );
+
+      result.add(categoryList);
     }
     return result;
   }
@@ -133,41 +88,6 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
     );
   }
 
-  Widget _taskProxyDecorator(
-      Widget child, int index, Animation<double> animation) {
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      margin: EdgeInsets.all(1),
-      color: Colors.white70,
-      child: child,
-    );
-  }
-
-  Widget _createTableItem(Task task) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      key: UniqueKey(),
-      child: Padding(
-        padding: EdgeInsets.all(0),
-        child: _isCarouselModeOn
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: DailyViewListItem(
-                  task: task,
-                ),
-              )
-            : CategoriesTableItem(
-                task: task,
-              ),
-      ),
-    );
-  }
-
   Widget _createCarousel() {
     var categoriesProvider =
         Provider.of<CategoriesProvider>(context, listen: true);
@@ -176,17 +96,19 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
       child: Stack(
         children: [
           Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 width: double.infinity,
                 alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 7),
+                padding:
+                    EdgeInsets.symmetric(vertical: widget.isShortMode ? 3 : 7),
                 child: AnimatedSmoothIndicator(
                   activeIndex: _carouselCurrentPage,
                   count: categoriesProvider.items.length,
                   effect: WormEffect(
-                    dotWidth: 14,
-                    dotHeight: 14,
+                    dotWidth: widget.isShortMode ? 10 : 14,
+                    dotHeight: widget.isShortMode ? 10 : 14,
                     activeDotColor: Theme.of(context).colorScheme.secondary,
                   ),
                   onDotClicked: (index) {
@@ -210,7 +132,8 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                       _carouselCurrentPage = index;
                     });
                   },
-                  aspectRatio: 3 / 3.8,
+                  aspectRatio: widget.isShortMode ? 2 / 1.05 : 3 / 3.7,
+//                height: 200, //constraints.maxHeight,
                   initialPage: _carouselCurrentPage,
                 ),
               ),
@@ -256,8 +179,12 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
     var categoriesProvider =
         Provider.of<CategoriesProvider>(context, listen: true);
 
+    var topPanelContainerSize = widget.isShortMode ? 28.0 : 35.0;
+    var topPanelIzonSize = widget.isShortMode ? 20.0 : 25.0;
+
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(
+          horizontal: 10, vertical: widget.isShortMode ? 5 : 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
@@ -274,15 +201,15 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                   topRight: Radius.circular(20),
                 ),
               ),
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(widget.isShortMode ? 3 : 5),
               child: Row(
                 children: [
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(2),
                       child: Container(
-                        width: 35,
-                        height: 35,
+                        width: topPanelContainerSize,
+                        height: topPanelContainerSize,
                         alignment: Alignment.center,
                         decoration: _isCompletedVisible
                             ? BoxDecoration(
@@ -292,7 +219,7 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                             : null,
                         child: IconButton(
                           padding: EdgeInsets.zero,
-                          iconSize: 25,
+                          iconSize: topPanelIzonSize,
                           icon: Icon(
                             _isCompletedVisible
                                 ? Icons.check_box
@@ -312,64 +239,65 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                     child: Padding(
                       padding: EdgeInsets.all(2),
                       child: Container(
-                        width: 35,
-                        height: 35,
+                        width: topPanelContainerSize,
+                        height: topPanelContainerSize,
                         alignment: Alignment.center,
-                        decoration: _isCarouselModeOn
+                        decoration: _isCarouselMode
                             ? BoxDecoration(
                                 color: Theme.of(context).colorScheme.primary,
                                 shape: BoxShape.circle,
                               )
                             : null,
                         child: IconButton(
-                          iconSize: 25,
+                          iconSize: topPanelIzonSize,
                           padding: EdgeInsets.zero,
                           icon: Icon(
-                            _isCarouselModeOn
+                            _isCarouselMode
                                 ? Icons.view_carousel_rounded
                                 : Icons.view_carousel_outlined,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
                           onPressed: () {
                             setState(() {
-                              _isCarouselModeOn = !_isCarouselModeOn;
+                              _isCarouselMode = !_isCarouselMode;
                             });
                           },
                         ),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(2),
-                      child: Container(
-                        width: 35,
-                        height: 35,
-                        alignment: Alignment.center,
-                        decoration: _isEditModeOn
-                            ? BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                shape: BoxShape.circle,
-                              )
-                            : null,
-                        child: IconButton(
-                          iconSize: 25,
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            _isEditModeOn
-                                ? Icons.edit_rounded
-                                : Icons.edit_outlined,
-                            color: Theme.of(context).colorScheme.secondary,
+                  if (!widget.isShortMode)
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(2),
+                        child: Container(
+                          width: topPanelContainerSize,
+                          height: topPanelContainerSize,
+                          alignment: Alignment.center,
+                          decoration: _isEditMode
+                              ? BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                )
+                              : null,
+                          child: IconButton(
+                            iconSize: topPanelIzonSize,
+                            padding: EdgeInsets.zero,
+                            icon: Icon(
+                              _isEditMode
+                                  ? Icons.edit_rounded
+                                  : Icons.edit_outlined,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isEditMode = !_isEditMode;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _isEditModeOn = !_isEditModeOn;
-                            });
-                          },
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -381,7 +309,7 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
-                  child: _isCarouselModeOn
+                  child: _isCarouselMode
                       ? _createCarousel()
                       : ReorderableListView(
                           scrollDirection: Axis.horizontal,
