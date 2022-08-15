@@ -32,7 +32,7 @@ class DailyViewListItem extends StatelessWidget {
         ),
       ),
       secondaryBackground: Container(
-        color: Theme.of(context).errorColor.withAlpha(85),
+        color: Theme.of(context).colorScheme.error.withAlpha(85),
         alignment: Alignment.centerRight,
         padding: EdgeInsets.only(right: 30),
         child: Icon(

@@ -6,17 +6,10 @@ import 'package:dosprav/models/task.dart';
 import 'package:dosprav/widgets/daily_view.dart';
 import 'package:dosprav/widgets/daily_view_list_item.dart';
 import 'package:dosprav/providers/categories_provider.dart';
+import 'package:dosprav/widgets/view_preview.dart';
 
-class DailyViewPreview extends StatefulWidget {
-  const DailyViewPreview({Key? key}) : super(key: key);
-
-  @override
-  _DailyViewPreviewState createState() => _DailyViewPreviewState();
-}
-
-class _DailyViewPreviewState extends State<DailyViewPreview> {
-  double tutorialCurrentPage = 0;
-  final PageController tutorialPageController = PageController();
+class DailyViewPreview extends StatelessWidget {
+  DailyViewPreview({Key? key}) : super(key: key);
 
   final tutorialTextStyle = TextStyle(
     fontSize: 22,
@@ -25,21 +18,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
     color: Colors.white,
   );
 
-  @override
-  void initState() {
-    super.initState();
-    tutorialPageController.addListener(() {
-      setState(() {
-        tutorialCurrentPage = tutorialPageController.page!;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    tutorialPageController.dispose();
-    super.dispose();
-  }
+  late final ColorScheme themeColorScheme;
 
   List<Task> _getTutorialTasks() {
     var result = [
@@ -95,7 +74,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
       padding: EdgeInsets.only(top: 15, left: 25, right: 25, bottom: 15),
       child: SingleChildScrollView(
         child: Text(
-          "The Daily List widget is a tool that helps you manage your daily routine and recurrent tasks.\nYou do not need to keep all these in your mind anymore since do.sprav application and Daily List widget, in particular, will manage them all for you.\nPlease look at the Tutorial to better familiarize yourself with Daily List functionality.",
+          "The Daily List view is a tool that helps you manage your daily routine and recurrent tasks.\nYou do not need to keep all these in your mind anymore since do.sprav application and Daily List view, in particular, will manage them all for you.\nPlease look at the Tutorial to familiarize yourself with Daily List functionality better.",
           style: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,
@@ -140,7 +119,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
           left: 150,
           child: Icon(
             Icons.touch_app_rounded,
-            color: Theme.of(context).colorScheme.secondary,
+            color: themeColorScheme.secondary,
             size: 65,
           ),
         ),
@@ -170,7 +149,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             height: 75,
             color: Colors.white,
             child: Container(
-              color: Theme.of(context).colorScheme.primary.withAlpha(175),
+              color: themeColorScheme.primary.withAlpha(175),
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(left: 25),
               child: Icon(
@@ -201,7 +180,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
           left: 190,
           child: Icon(
             Icons.touch_app_rounded,
-            color: Theme.of(context).colorScheme.secondary,
+            color: themeColorScheme.secondary,
             size: 65,
           ),
         ),
@@ -210,7 +189,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
           left: 250,
           child: Icon(
             Icons.arrow_right_alt_sharp,
-            color: Theme.of(context).colorScheme.secondary,
+            color: themeColorScheme.secondary,
             size: 65,
           ),
         ),
@@ -240,7 +219,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             height: 75,
             color: Colors.white,
             child: Container(
-              color: Theme.of(context).errorColor.withAlpha(175),
+              color: themeColorScheme.error.withAlpha(175),
               alignment: Alignment.centerRight,
               padding: EdgeInsets.only(right: 30),
               child: Icon(
@@ -271,7 +250,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
           left: 110,
           child: Icon(
             Icons.touch_app_rounded,
-            color: Theme.of(context).colorScheme.secondary,
+            color: themeColorScheme.secondary,
             size: 65,
           ),
         ),
@@ -282,7 +261,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             angle: pi,
             child: Icon(
               Icons.arrow_right_alt_sharp,
-              color: Theme.of(context).colorScheme.secondary,
+              color: themeColorScheme.secondary,
               size: 65,
             ),
           ),
@@ -312,12 +291,12 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             height: 35,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: themeColorScheme.primary,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.check_box,
-              color: Theme.of(context).colorScheme.secondary,
+              color: themeColorScheme.secondary,
             ),
           ),
         ),
@@ -329,7 +308,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             child: Icon(
               Icons.arrow_right_alt_sharp,
               size: 100,
-              color: Theme.of(context).colorScheme.secondary,
+              color: themeColorScheme.secondary,
             ),
           ),
         ),
@@ -358,12 +337,12 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             height: 35,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: themeColorScheme.primary,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.next_plan_rounded,
-              color: Theme.of(context).colorScheme.secondary,
+              color: themeColorScheme.secondary,
             ),
           ),
         ),
@@ -375,7 +354,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             child: Icon(
               Icons.arrow_right_alt_sharp,
               size: 100,
-              color: Theme.of(context).colorScheme.secondary,
+              color: themeColorScheme.secondary,
             ),
           ),
         ),
@@ -404,12 +383,12 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             height: 35,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: themeColorScheme.primary,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.wb_incandescent_rounded,
-              color: Theme.of(context).colorScheme.secondary,
+              color: themeColorScheme.secondary,
             ),
           ),
         ),
@@ -421,7 +400,7 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
             child: Icon(
               Icons.arrow_right_alt_sharp,
               size: 100,
-              color: Theme.of(context).colorScheme.secondary,
+              color: themeColorScheme.secondary,
             ),
           ),
         ),
@@ -438,12 +417,12 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
         Icon(
           Icons.check,
           size: 100,
-          color: Theme.of(context).colorScheme.primary,
+          color: themeColorScheme.primary,
         ),
         Padding(
           padding: EdgeInsets.all(10),
           child: Text(
-            "Congratulations! You have completed the Daily List tutorial. Please use it now to improve your efficiency. Enjoy it!",
+            "Congratulations! You have completed the Daily List view tutorial. Please use it now to improve your efficiency. Enjoy it!",
             textAlign: TextAlign.center,
             style: tutorialTextStyle,
           ),
@@ -454,117 +433,14 @@ class _DailyViewPreviewState extends State<DailyViewPreview> {
 
   @override
   Widget build(BuildContext context) {
+    themeColorScheme = Theme.of(context).colorScheme;
+
     List<Widget> pages = _getPages();
 
-    return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 105),
-      backgroundColor: Colors.transparent,
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(20),
-          color: Theme.of(context).colorScheme.secondaryContainer,
-        ),
-        height: 450,
-        child: Column(
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  DailyView(
-                    demoItems: _getTutorialTasks(),
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey.withAlpha(180),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  Positioned(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      child: PageView(
-                        controller: tutorialPageController,
-                        children: pages,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Row(
-                children: [
-                  if (tutorialCurrentPage == 0)
-                    Expanded(
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(true);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Theme.of(context).colorScheme.secondary,
-                          ),
-                          child: Text(
-                            "Activate",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (tutorialCurrentPage > 0)
-                    Expanded(
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            tutorialPageController.previousPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.linear,
-                            );
-                          },
-                          child: Text("Previous"),
-                        ),
-                      ),
-                    ),
-                  Expanded(
-                    child: Center(
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text("Close"),
-                      ),
-                    ),
-                  ),
-                  if (tutorialCurrentPage < pages.length - 1)
-                    Expanded(
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            tutorialPageController.nextPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.linear,
-                            );
-                          },
-                          child: Text(
-                            tutorialCurrentPage == 0 ? "Tutorial" : "Next",
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (tutorialCurrentPage == pages.length - 1) Spacer(),
-                ],
-              ),
-            ),
-          ],
-        ),
+    return ViewPreview(
+      previewPages: pages,
+      backgroundView: DailyView(
+        demoItems: _getTutorialTasks(),
       ),
     );
   }
