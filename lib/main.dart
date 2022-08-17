@@ -15,6 +15,9 @@ import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/providers/view_models_provider.dart';
 import 'package:dosprav/screens/categories_table_view_screen.dart';
 import 'package:dosprav/providers/home_slots_provider.dart';
+import 'package:dosprav/screens/calendar_view_screen.dart';
+import 'package:dosprav/providers/calendar_goals_provider.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +52,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => HomeSlotsProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => CalendarGoalsProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'do.sprav',
@@ -71,6 +77,7 @@ class MyApp extends StatelessWidget {
           TaskComposeScreen.routeName: (context) => TaskComposeScreen(),
           DailyViewScreen.routeName: (context) => DailyViewScreen(),
           CategoriesTableViewScreen.routeName:(context) => CategoriesTableViewScreen(),
+          CalendarViewScreen.routeName:(context) => CalendarViewScreen(),
         },
       ),
     );

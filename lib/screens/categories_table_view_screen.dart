@@ -10,17 +10,12 @@ import 'package:dosprav/widgets/category_compose.dart';
 import 'package:dosprav/providers/home_slots_provider.dart';
 import 'package:dosprav/models/home_slot.dart';
 
-class CategoriesTableViewScreen extends StatefulWidget {
+class CategoriesTableViewScreen extends StatelessWidget {
+
   static const String routeName = "/categories-table-view";
 
   const CategoriesTableViewScreen({Key? key}) : super(key: key);
 
-  @override
-  _CategoriesTableViewScreenState createState() =>
-      _CategoriesTableViewScreenState();
-}
-
-class _CategoriesTableViewScreenState extends State<CategoriesTableViewScreen> {
   @override
   Widget build(BuildContext context) {
     final routeArgs =

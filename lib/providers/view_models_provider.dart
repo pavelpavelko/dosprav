@@ -5,6 +5,7 @@ import 'package:dosprav/models/view_model.dart';
 import 'package:dosprav/screens/daily_view_screen.dart';
 import 'package:dosprav/screens/categories_table_view_screen.dart';
 import 'package:dosprav/widgets/categories_table_view_preview.dart';
+import 'package:dosprav/screens/calendar_view_screen.dart';
 
 class ViewModelsProvider with ChangeNotifier {
   final List<ViewModel> _items = [
@@ -26,6 +27,16 @@ class ViewModelsProvider with ChangeNotifier {
       createViewPreview: () => CategoriesTableViewPreview(),
       viewScreenRouteName: CategoriesTableViewScreen.routeName,
       //isActivated: true,
+    ),
+    ViewModel(
+      id: UniqueKey().toString(),
+      uid: "",
+      name: "Calendar",
+      imageUrl:
+          "https://res.cloudinary.com/softwarepundit/image/upload/c_lfill,dpr_1.0,f_auto,h_1600,q_auto,w_1600/v1/software/calendar-icon",
+      createViewPreview: () => CategoriesTableViewPreview(),
+      viewScreenRouteName: CalendarViewScreen.routeName,
+      isActivated: true,
     ),
   ];
 
