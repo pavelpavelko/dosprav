@@ -1,3 +1,4 @@
+import 'package:dosprav/helpers/task_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -16,29 +17,12 @@ class CalendarGoalItem extends StatelessWidget {
   final String goalId;
   final bool isShortMode;
 
-  String _getShortGoalName(CalendarGoal goal) {
-    String shortName;
-    List<String> nameWords = goal.name.split(" ");
-    if (nameWords.length == 1) {
-      if (nameWords[0].length > 1) {
-        shortName = nameWords[0].substring(0, 1).toUpperCase() +
-            nameWords[0].substring(1, 2);
-      } else {
-        shortName = nameWords[0].substring(0, 1).toUpperCase();
-      }
-    } else {
-      shortName = nameWords[0].substring(0, 1).toUpperCase() +
-          nameWords[1].substring(0, 1).toUpperCase();
-    }
-    return shortName;
-  }
-
   @override
   Widget build(BuildContext context) {
     var goal = Provider.of<CalendarGoalsProvider>(context, listen: false)
         .getById(goalId);
 
-    var shortName = _getShortGoalName(goal);
+    var shortName = TaskHelper.getShortName(goal.name);
 
     return Card(
       elevation: 3,

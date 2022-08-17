@@ -50,7 +50,7 @@ class TasksProvider with ChangeNotifier {
     ),
    ];
 
-  //List<Task> get items => [..._items];
+  List<Task> get items => [..._items];
 
   void addTask(Task task) {
     _items.add(task);

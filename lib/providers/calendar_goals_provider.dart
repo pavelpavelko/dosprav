@@ -5,12 +5,13 @@ import 'package:dosprav/models/calendar_goal_rule.dart';
 
 class CalendarGoalsProvider with ChangeNotifier {
   static const maxGoalsNumber = 4;
+  static const goalAssessmentDuration = Duration(days: 7);
 
   final List<CalendarGoal> _items = [
     CalendarGoal(
       id: UniqueKey().toString(),
       uid: "",
-      name: "Sport",// ssf sdfs f sdfsd sdf sdf sfd sdf s",
+      name: "Sport",
       desireTaskName: "Sport Workout",
       rule: CalendarGoalRule(type: GoalType.desire),
     ),

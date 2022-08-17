@@ -21,6 +21,23 @@ class TaskHelper {
     return cuttedFirst.isBefore(cuttedSecond) ? -1 : 1;
   }
 
+  static String getShortName(String name) {
+    String shortName;
+    List<String> nameWords = name.split(" ");
+    if (nameWords.length == 1) {
+      if (nameWords[0].length > 1) {
+        shortName = nameWords[0].substring(0, 1).toUpperCase() +
+            nameWords[0].substring(1, 2);
+      } else {
+        shortName = nameWords[0].substring(0, 1).toUpperCase();
+      }
+    } else {
+      shortName = nameWords[0].substring(0, 1).toUpperCase() +
+          nameWords[1].substring(0, 1).toUpperCase();
+    }
+    return shortName;
+  }
+
   static Future<bool?> showDeleteConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,

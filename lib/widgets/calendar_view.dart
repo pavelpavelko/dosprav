@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/widgets/calendar_goal_item.dart';
 import 'package:dosprav/widgets/calendar_goal_compose.dart';
+import 'package:dosprav/widgets/calendar_table.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({
@@ -99,11 +100,7 @@ class _CalendarViewState extends State<CalendarView> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(5),
-              child: Center(
-                child: Text(
-                  "TBD",
-                ),
-              ),
+              child: CalendarTable(),
             ),
           ),
         ],
