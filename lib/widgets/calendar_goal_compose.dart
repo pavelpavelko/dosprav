@@ -179,27 +179,31 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
                     ),
                   ),
                   AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
+                    duration: Duration(milliseconds: 300),
                     width: double.infinity,
                     height: _goalType == GoalType.desire ? 70 : 0,
                     padding: EdgeInsets.only(
                         left: 10, right: 10, top: 10, bottom: 5),
-                    child: TextField(
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.name,
-                      enabled: _goalType == GoalType.desire,
-                      controller: _goalTaskNameController,
-                      onChanged: (value) {
-                        setState(() {
-                          _goalTaskName = value;
-                        });
-                      },
-                      onSubmitted: (value) => _trySaveGoal(),
-                      decoration: InputDecoration(
-                        labelText: "\"Do\" Task Name",
-                        errorText: _isTaskNameErrorTextVisible
-                            ? "Calendar Goal's Task name must not be empty"
-                            : null,
+                    child: AnimatedOpacity(
+                      duration: Duration(milliseconds: 300),
+                      opacity: _goalType == GoalType.desire ? 1 : 0,
+                      child: TextField(
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.name,
+                        enabled: _goalType == GoalType.desire,
+                        controller: _goalTaskNameController,
+                        onChanged: (value) {
+                          setState(() {
+                            _goalTaskName = value;
+                          });
+                        },
+                        onSubmitted: (value) => _trySaveGoal(),
+                        decoration: InputDecoration(
+                          labelText: "\"Do\" Task Name",
+                          errorText: _isTaskNameErrorTextVisible
+                              ? "Calendar Goal's Task name must not be empty"
+                              : null,
+                        ),
                       ),
                     ),
                   ),
