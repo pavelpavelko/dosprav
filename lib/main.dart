@@ -17,6 +17,7 @@ import 'package:dosprav/screens/categories_table_view_screen.dart';
 import 'package:dosprav/providers/home_slots_provider.dart';
 import 'package:dosprav/screens/calendar_view_screen.dart';
 import 'package:dosprav/providers/calendar_goals_provider.dart';
+import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
 
 
 void main() async {
@@ -54,6 +55,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => CalendarGoalsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CalendarGoalTracksProvider(),
         ),
       ],
       child: MaterialApp(

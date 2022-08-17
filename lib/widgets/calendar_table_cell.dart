@@ -8,6 +8,11 @@ import 'package:dosprav/helpers/task_helper.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/screens/task_detail_screen.dart';
+import 'package:dosprav/widgets/calendar_goal_track_compose.dart';
+import 'package:dosprav/models/calendar_goal_rule.dart';
+import 'package:dosprav/models/calendar_goal_track.dart';
+import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
+import 'package:dosprav/providers/calendar_goals_provider.dart';
 
 class CalendarTableCell extends StatelessWidget {
   const CalendarTableCell({
@@ -26,7 +31,7 @@ class CalendarTableCell extends StatelessWidget {
     return filteredTasks;
   }
 
-  Widget createTasksWidget(BuildContext context, List<Task> tasks) {
+  Widget _createTasksWidget(BuildContext context, List<Task> tasks) {
     if (tasks.isNotEmpty) {
       var taskShortName = TaskHelper.getShortName(tasks[0].name);
       if (tasks.length > 1) {
@@ -81,6 +86,78 @@ class CalendarTableCell extends StatelessWidget {
     return SizedBox.shrink();
   }
 
+  List<Widget> _createTrackWidget(BuildContext context) {
+    List<Widget> result = [];
+    double trackIconSize = 12;
+    double trackTextFontSize = 13;
+
+    if (TaskHelper.compareDatesByDays(cellDate, DateTime.now()) > 0) {
+      return result;
+    }
+
+    var track = Provider.of<CalendarGoalTracksProvider>(context, listen: true)
+        .getTrackByDate(cellDate);
+
+    var goals = Provider.of<CalendarGoalsProvider>(context).items;
+    for (var goal in goals) {
+      var shortName = TaskHelper.getShortName(goal.name);
+      var goalTrackState =
+          track?.trackStateMap[goal.id] ?? GoalTrackState.unknown;
+      Icon goalTrackIcon;
+      switch (goalTrackState) {
+        case GoalTrackState.occurred:
+          goalTrackIcon = Icon(
+            Icons.check_circle_outline_rounded,
+            size: trackIconSize,
+            color: goal.rule.type == GoalType.desire
+                ? Colors.green.withAlpha(150)
+                : Colors.red.withAlpha(150),
+          );
+          break;
+        case GoalTrackState.missed:
+          goalTrackIcon = Icon(
+            Icons.cancel_outlined,
+            size: trackIconSize,
+            color: goal.rule.type == GoalType.avoid
+                ? Colors.green.withAlpha(150)
+                : Colors.red.withAlpha(150),
+          );
+          break;
+        case GoalTrackState.unknown:
+          goalTrackIcon = Icon(
+            Icons.question_mark_outlined,
+            size: trackIconSize,
+            color: Theme.of(context).colorScheme.primary.withAlpha(150),
+          );
+          break;
+      }
+      result.add(
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "$shortName: ",
+                style: TextStyle(
+                  height: 0.9,
+                  fontSize: trackTextFontSize,
+                  fontWeight: FontWeight.bold,
+                  color: track != null
+                      ? Theme.of(context).colorScheme.primary.withAlpha(150)
+                      : Colors.grey.withAlpha(150),
+                ),
+              ),
+              goalTrackIcon,
+            ],
+          ),
+        ),
+      );
+    }
+
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     var taskProvider = Provider.of<TasksProvider>(context);
@@ -89,27 +166,49 @@ class CalendarTableCell extends StatelessWidget {
 
     List<Task> todaysActiveTasks = _filterTodaysActiveTask(taskProvider.items);
 
+    List<Widget> trackRows = _createTrackWidget(context);
+
     return GestureDetector(
+      onTap: () {
+        if (TaskHelper.compareDatesByDays(cellDate, DateTime.now()) <= 0) {
+          showDialog(
+              context: context,
+              builder: (ctx) {
+                return CalendarGoalTrackCompose(trackDate: cellDate);
+              });
+        }
+      },
       child: Container(
         color: Theme.of(context).colorScheme.secondaryContainer,
         height: 75,
         child: Stack(
           children: [
-            createTasksWidget(context, todaysActiveTasks),
+            if (trackRows.isEmpty)
+              _createTasksWidget(context, todaysActiveTasks),
             Positioned.fill(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    cellDate.day.toString(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isToday
-                          ? Theme.of(context).colorScheme.secondary
-                          : Colors.lightBlue,
-                      fontSize: 18,
+                  Container(
+                    width: double.infinity,
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      cellDate.day.toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        height: 0.95,
+                        color: isToday
+                            ? Theme.of(context).colorScheme.secondary
+                            : Colors.lightBlue,
+                        fontSize: 18,
+                      ),
                     ),
-                  )
+                  ),
+                  Spacer(),
+                  ...trackRows,
+                  SizedBox(
+                    height: 3,
+                  ),
                 ],
               ),
             ),

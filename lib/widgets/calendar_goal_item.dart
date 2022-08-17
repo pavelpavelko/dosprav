@@ -1,11 +1,10 @@
-import 'package:dosprav/helpers/task_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
 import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/widgets/calendar_goal_compose.dart';
-import 'package:dosprav/models/calendar_goal.dart';
+import 'package:dosprav/helpers/task_helper.dart';
 
 class CalendarGoalItem extends StatelessWidget {
   const CalendarGoalItem({
