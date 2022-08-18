@@ -13,14 +13,17 @@ import 'package:dosprav/models/calendar_goal_rule.dart';
 import 'package:dosprav/models/calendar_goal_track.dart';
 import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
 import 'package:dosprav/providers/calendar_goals_provider.dart';
+import 'package:dosprav/models/calendar_goal.dart';
 
 class CalendarTableCell extends StatelessWidget {
   const CalendarTableCell({
     Key? key,
     required this.cellDate,
+    required this.goalsSelectionMap,
   }) : super(key: key);
 
   final DateTime cellDate;
+  final Map<String, bool> goalsSelectionMap;
 
   List<Task> _filterTodaysActiveTask(List<Task> tasks) {
     List<Task> filteredTasks = tasks.where((task) {
@@ -88,8 +91,6 @@ class CalendarTableCell extends StatelessWidget {
 
   List<Widget> _createTrackWidget(BuildContext context) {
     List<Widget> result = [];
-    double trackIconSize = 12;
-    double trackTextFontSize = 13;
 
     if (TaskHelper.compareDatesByDays(cellDate, DateTime.now()) > 0) {
       return result;
@@ -98,64 +99,100 @@ class CalendarTableCell extends StatelessWidget {
     var track = Provider.of<CalendarGoalTracksProvider>(context, listen: true)
         .getTrackByDate(cellDate);
 
-    var goals = Provider.of<CalendarGoalsProvider>(context).items;
-    for (var goal in goals) {
-      var shortName = TaskHelper.getShortName(goal.name);
-      var goalTrackState =
-          track?.trackStateMap[goal.id] ?? GoalTrackState.unknown;
-      Icon goalTrackIcon;
-      switch (goalTrackState) {
-        case GoalTrackState.occurred:
-          goalTrackIcon = Icon(
-            Icons.check_circle_outline_rounded,
-            size: trackIconSize,
-            color: goal.rule.type == GoalType.desire
-                ? Colors.green.withAlpha(150)
-                : Colors.red.withAlpha(150),
+    var goalProvider = Provider.of<CalendarGoalsProvider>(context);
+
+    if (goalsSelectionMap.containsValue(true)) {
+      for (var goalId in goalsSelectionMap.keys) {
+        if (goalsSelectionMap[goalId] != null &&
+            goalsSelectionMap[goalId] == true) {
+          var selectedGoal = goalProvider.getById(goalId);
+          var trackRow = _createTrackRowByGoal(
+            context: context,
+            goal: selectedGoal,
+            track: track,
+            isSelected: true,
           );
-          break;
-        case GoalTrackState.missed:
-          goalTrackIcon = Icon(
-            Icons.cancel_outlined,
-            size: trackIconSize,
-            color: goal.rule.type == GoalType.avoid
-                ? Colors.green.withAlpha(150)
-                : Colors.red.withAlpha(150),
-          );
-          break;
-        case GoalTrackState.unknown:
-          goalTrackIcon = Icon(
-            Icons.question_mark_outlined,
-            size: trackIconSize,
-            color: Theme.of(context).colorScheme.primary.withAlpha(150),
-          );
-          break;
+          result.add(trackRow);
+          return result;
+        }
       }
-      result.add(
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "$shortName: ",
-                style: TextStyle(
-                  height: 0.9,
-                  fontSize: trackTextFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: track != null
-                      ? Theme.of(context).colorScheme.primary.withAlpha(150)
-                      : Colors.grey.withAlpha(150),
-                ),
-              ),
-              goalTrackIcon,
-            ],
-          ),
-        ),
-      );
+    }
+
+    for (var goal in goalProvider.items) {
+      var trackRow =
+          _createTrackRowByGoal(context: context, goal: goal, track: track);
+      result.add(trackRow);
     }
 
     return result;
+  }
+
+  Widget _createTrackRowByGoal(
+      {required BuildContext context,
+      required CalendarGoal goal,
+      CalendarGoalTrack? track,
+      bool isSelected = false}) {
+    double trackIconSize = isSelected ? 27 : 12;
+    double trackTextFontSize = 13;
+
+    var shortName = TaskHelper.getShortName(goal.name);
+    var goalTrackState =
+        track?.trackStateMap[goal.id] ?? GoalTrackState.unknown;
+    Icon goalTrackIcon;
+    switch (goalTrackState) {
+      case GoalTrackState.occurred:
+        goalTrackIcon = Icon(
+          Icons.check_circle_outline_rounded,
+          size: trackIconSize,
+          color: goal.rule.type == GoalType.desire
+              ? Colors.green.withAlpha(150)
+              : Colors.red.withAlpha(150),
+        );
+        break;
+      case GoalTrackState.missed:
+        goalTrackIcon = Icon(
+          Icons.cancel_outlined,
+          size: trackIconSize,
+          color: goal.rule.type == GoalType.avoid
+              ? Colors.green.withAlpha(150)
+              : Colors.red.withAlpha(150),
+        );
+        break;
+      case GoalTrackState.unknown:
+        goalTrackIcon = Icon(
+          Icons.question_mark_outlined,
+          size: trackIconSize,
+          color: Theme.of(context).colorScheme.primary.withAlpha(150),
+        );
+        break;
+    }
+    if (isSelected) {
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(bottom: 15),
+        child: goalTrackIcon);
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+            Text(
+              "$shortName: ",
+              style: TextStyle(
+                height: 0.9,
+                fontSize: trackTextFontSize,
+                fontWeight: FontWeight.bold,
+                color: track != null
+                    ? Theme.of(context).colorScheme.primary.withAlpha(150)
+                    : Colors.grey.withAlpha(150),
+              ),
+            ),
+          goalTrackIcon,
+        ],
+      ),
+    );
   }
 
   @override

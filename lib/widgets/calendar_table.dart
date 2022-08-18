@@ -9,9 +9,11 @@ class CalendarTable extends StatelessWidget {
   const CalendarTable({
     Key? key,
     this.showWeekDaysHeader = true,
+    required this.goalsSelectionMap,
   }) : super(key: key);
 
   final bool showWeekDaysHeader;
+  final Map<String, bool> goalsSelectionMap;
 
   static const int _numWeeks = 3;
 
@@ -47,7 +49,10 @@ class CalendarTable extends StatelessWidget {
           Duration(days: daysFromStartDate),
         );
         row.add(
-          CalendarTableCell(cellDate: cellDate),
+          CalendarTableCell(
+            cellDate: cellDate,
+            goalsSelectionMap: goalsSelectionMap,
+          ),
         );
       }
       result.add(TableRow(children: row));

@@ -5,16 +5,65 @@ import 'package:provider/provider.dart';
 import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/widgets/calendar_goal_compose.dart';
 import 'package:dosprav/helpers/task_helper.dart';
+import 'package:dosprav/models/calendar_goal_track.dart';
+import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
+import 'package:dosprav/models/calendar_goal.dart';
+import 'package:dosprav/models/calendar_goal_rule.dart';
 
 class CalendarGoalItem extends StatelessWidget {
   const CalendarGoalItem({
     Key? key,
     required this.goalId,
+    required this.onTap,
     this.isShortMode = false,
+    this.isSelected = false,
   }) : super(key: key);
 
   final String goalId;
   final bool isShortMode;
+  final bool isSelected;
+  final void Function(String goalId) onTap;
+
+
+  Color _calculateColor(BuildContext context, CalendarGoal goal) {
+    var tracksProvider = Provider.of<CalendarGoalTracksProvider>(context);
+
+    var daysToCheck = CalendarGoalsProvider.goalAssessmentDuration.inDays;
+    var occurrenceNumber = goal.rule.type == GoalType.desire ? 0 : daysToCheck;
+    var now = DateTime.now();
+    for (int dayIndex = 0;
+        dayIndex < daysToCheck;
+        dayIndex++) {
+      var date = now.subtract(Duration(days: dayIndex));
+      var track = tracksProvider.getTrackByDate(date);
+      if(goal.rule.type == GoalType.desire){
+        if(track != null && track.trackStateMap[goalId] != null && track.trackStateMap[goalId] == GoalTrackState.occurred){
+          occurrenceNumber++;
+        }
+      } else {
+        if(track != null && track.trackStateMap[goalId] != null && track.trackStateMap[goalId] == GoalTrackState.missed){
+          occurrenceNumber--;
+        }
+      }
+    }
+    if (goal.rule.type == GoalType.desire) {
+      if (occurrenceNumber >= goal.rule.numDaysForGreen) {
+        return Colors.green;
+      } else if(occurrenceNumber >= goal.rule.numDaysForYellow){
+        return Colors.yellow;
+      } else {
+        return Colors.red;
+      }
+    } else {
+      if (occurrenceNumber <= daysToCheck - goal.rule.numDaysForGreen) {
+        return Colors.green;
+      } else if(occurrenceNumber <= daysToCheck - goal.rule.numDaysForYellow){
+        return Colors.yellow;
+      } else {
+        return Colors.red;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +71,10 @@ class CalendarGoalItem extends StatelessWidget {
         .getById(goalId);
 
     var shortName = TaskHelper.getShortName(goal.name);
-
+    
     return Card(
-      elevation: 3,
-      color: Theme.of(context).colorScheme.secondary,
+      elevation: isSelected ? 0 : 5,
+      color: isSelected ? Theme.of(context).colorScheme.secondary.withGreen(200) : Theme.of(context).colorScheme.secondary,
       child: GestureDetector(
         onLongPress: () {
           showDialog(
@@ -36,6 +85,9 @@ class CalendarGoalItem extends StatelessWidget {
               );
             },
           );
+        },
+        onTap: () {
+          onTap(goalId);
         },
         child: Container(
           height: isShortMode ? 25 : 30,
@@ -59,8 +111,8 @@ class CalendarGoalItem extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(right: 3, left: 3),
                 child: CircleAvatar(
-                  radius: isShortMode ? 4 : 5,
-                  backgroundColor: Colors.green,
+                  radius: isShortMode ? 5 : 6,
+                  backgroundColor: _calculateColor(context, goal),
                 ),
               ),
             ],

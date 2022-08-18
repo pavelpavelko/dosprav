@@ -20,16 +20,19 @@ class CalendarView extends StatefulWidget {
 }
 
 class _CalendarViewState extends State<CalendarView> {
-  List<Widget> _createGoalsTopPanel() {
+  final Map<String, bool> _goalsSelectionMap = {};
+
+  List<Widget> _createGoalsTopPanel(CalendarGoalsProvider goalsProvider) {
     List<Widget> result = [];
-    var goals =
-        Provider.of<CalendarGoalsProvider>(context, listen: false).items;
+    var goals = goalsProvider.items;
 
     for (var goal in goals) {
       result.add(
         CalendarGoalItem(
           goalId: goal.id,
+          onTap: _onGoalItemTap,
           isShortMode: widget.isShortMode,
+          isSelected: _goalsSelectionMap[goal.id] ?? false,
         ),
       );
     }
@@ -37,14 +40,24 @@ class _CalendarViewState extends State<CalendarView> {
     return result;
   }
 
+  void _onGoalItemTap(String goalId) {
+    setState(() {
+      var goalSelection = _goalsSelectionMap[goalId] ?? false;
+      _goalsSelectionMap[goalId] = !goalSelection;
+      for (var key in _goalsSelectionMap.keys) {
+        if(key != goalId){
+        _goalsSelectionMap[key] = key == goalId;
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var goalsProvider =
-        Provider.of<CalendarGoalsProvider>(context, listen: true);
-
     var topPanelContainerSize = widget.isShortMode ? 28.0 : 35.0;
     var topPanelIzonSize = widget.isShortMode ? 20.0 : 25.0;
 
+    var goalsProvider = Provider.of<CalendarGoalsProvider>(context, listen: true);
     return Card(
       margin: EdgeInsets.symmetric(
           horizontal: 10, vertical: widget.isShortMode ? 5 : 10),
@@ -64,43 +77,43 @@ class _CalendarViewState extends State<CalendarView> {
             ),
             padding: EdgeInsets.all(widget.isShortMode ? 3 : 5),
             child: Row(
-                children: [
-                  ..._createGoalsTopPanel(),
-                  Container(
-                    margin: EdgeInsets.all(2),
-                    width: topPanelContainerSize,
-                    height: topPanelContainerSize,
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      iconSize: topPanelIzonSize,
-                      icon: Icon(
-                        Icons.add_circle_outlined,
-                        color: goalsProvider.items.length <
-                                CalendarGoalsProvider.maxGoalsNumber
-                            ? Theme.of(context).colorScheme.secondary
-                            : Colors.grey,
-                      ),
-                      onPressed: goalsProvider.items.length <
+              children: [
+                ..._createGoalsTopPanel(goalsProvider),
+                Container(
+                  margin: EdgeInsets.all(2),
+                  width: topPanelContainerSize,
+                  height: topPanelContainerSize,
+                  alignment: Alignment.center,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: topPanelIzonSize,
+                    icon: Icon(
+                      Icons.add_circle_outlined,
+                      color: goalsProvider.items.length <
                               CalendarGoalsProvider.maxGoalsNumber
-                          ? () {
-                              showDialog(
-                                context: context,
-                                builder: (ctx) {
-                                  return CalendarGoalCompose();
-                                },
-                              );
-                            }
-                          : null,
+                          ? Theme.of(context).colorScheme.secondary
+                          : Colors.grey,
                     ),
+                    onPressed: goalsProvider.items.length <
+                            CalendarGoalsProvider.maxGoalsNumber
+                        ? () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) {
+                                return CalendarGoalCompose();
+                              },
+                            );
+                          }
+                        : null,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(5),
-              child: CalendarTable(),
+              child: CalendarTable(goalsSelectionMap: _goalsSelectionMap),
             ),
           ),
         ],
