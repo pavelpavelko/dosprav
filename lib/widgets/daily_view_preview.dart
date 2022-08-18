@@ -422,7 +422,7 @@ class DailyViewPreview extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(10),
           child: Text(
-            "Congratulations! You have completed the Daily List view tutorial. Please use it now to improve your efficiency. Enjoy it!",
+            "Congratulations! You have completed the Daily List view tutorial. You can use it now to improve your efficiency.\nEnjoy it!",
             textAlign: TextAlign.center,
             style: tutorialTextStyle,
           ),

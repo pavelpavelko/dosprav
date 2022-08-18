@@ -9,7 +9,7 @@ class HomeSlotsProvider with ChangeNotifier {
   final int _maxSlots = 2;
 
   List<HomeSlot> _items = [
-    //HomeSlot(slotType: SlotType.categoriesTableView),
+    HomeSlot(slotType: SlotType.calendarView),
     HomeSlot(slotType: SlotType.dailyList),
   ];
 
@@ -27,14 +27,17 @@ class HomeSlotsProvider with ChangeNotifier {
     } else {
       switch (slot.slotType) {
         case SlotType.dailyList:
-          result = "Daily List view pushed on the Home's top.";
+          result = "The Daily List view pushed on the Home's top.";
           break;
         case SlotType.categoriesTableView:
-          result = "Categories Table view pushed on the Home's top.";
+          result = "The Categories Table view pushed on the Home's top.";
           break;
         case SlotType.categoryView:
           var category = Provider.of<CategoriesProvider>(context, listen: false).getById(slot.categoryId!);
-          result = "${category.name} category view pushed on the Home's top.";
+          result = "The ${category.name} category view pushed on the Home's top.";
+          break;
+        case SlotType.calendarView:
+          result = "The Calendar view pushed on the Home's top.";
           break;
       }
     }

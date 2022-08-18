@@ -27,4 +27,5 @@ enum SlotType {
   dailyList,
   categoriesTableView,
   categoryView,
+  calendarView,
 }

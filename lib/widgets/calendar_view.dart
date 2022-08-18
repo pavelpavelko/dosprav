@@ -45,8 +45,8 @@ class _CalendarViewState extends State<CalendarView> {
       var goalSelection = _goalsSelectionMap[goalId] ?? false;
       _goalsSelectionMap[goalId] = !goalSelection;
       for (var key in _goalsSelectionMap.keys) {
-        if(key != goalId){
-        _goalsSelectionMap[key] = key == goalId;
+        if (key != goalId) {
+          _goalsSelectionMap[key] = key == goalId;
         }
       }
     });
@@ -57,7 +57,8 @@ class _CalendarViewState extends State<CalendarView> {
     var topPanelContainerSize = widget.isShortMode ? 28.0 : 35.0;
     var topPanelIzonSize = widget.isShortMode ? 20.0 : 25.0;
 
-    var goalsProvider = Provider.of<CalendarGoalsProvider>(context, listen: true);
+    var goalsProvider =
+        Provider.of<CalendarGoalsProvider>(context, listen: true);
     return Card(
       margin: EdgeInsets.symmetric(
           horizontal: 10, vertical: widget.isShortMode ? 5 : 10),
@@ -113,7 +114,10 @@ class _CalendarViewState extends State<CalendarView> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(5),
-              child: CalendarTable(goalsSelectionMap: _goalsSelectionMap),
+              child: CalendarTable(
+                goalsSelectionMap: _goalsSelectionMap,
+                isShortMode: widget.isShortMode,
+              ),
             ),
           ),
         ],

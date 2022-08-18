@@ -91,7 +91,7 @@ class CategoriesTableViewPreview extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(10),
           child: Text(
-            "Congratulations! You have completed the Categories Table view tutorial. Now you can use it now to improve your efficiency.\nEnjoy it!",
+            "Congratulations! You have completed the Categories Table view tutorial. You can use it now to improve your efficiency.\nEnjoy it!",
             textAlign: TextAlign.center,
             style: tutorialTextStyle,
           ),

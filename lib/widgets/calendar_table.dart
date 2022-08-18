@@ -9,18 +9,20 @@ class CalendarTable extends StatelessWidget {
   const CalendarTable({
     Key? key,
     this.showWeekDaysHeader = true,
+    this.isShortMode = false,
     required this.goalsSelectionMap,
   }) : super(key: key);
 
   final bool showWeekDaysHeader;
   final Map<String, bool> goalsSelectionMap;
+  final bool isShortMode;
 
   static const int _numWeeks = 3;
 
   List<TableRow> _createTableRows(DateTime startDate) {
     List<TableRow> result = [];
 
-    if (showWeekDaysHeader) {
+    if (showWeekDaysHeader && !isShortMode) {
       List<Widget> row = [];
       for (int weekDayIndex = 0; weekDayIndex < 7; weekDayIndex++) {
         var weekDay = DateFormat("E").format(
@@ -52,6 +54,7 @@ class CalendarTable extends StatelessWidget {
           CalendarTableCell(
             cellDate: cellDate,
             goalsSelectionMap: goalsSelectionMap,
+            isShortMode: isShortMode,
           ),
         );
       }
@@ -72,10 +75,12 @@ class CalendarTable extends StatelessWidget {
     var startDate = today.subtract(durationToSubstract);
     var tableRows = _createTableRows(startDate);
 
-    return Table(
-      border: TableBorder.all(color: Theme.of(context).colorScheme.primary),
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: tableRows,
+    return SingleChildScrollView(
+      child: Table(
+        border: TableBorder.all(color: Theme.of(context).colorScheme.primary),
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: tableRows,
+      ),
     );
   }
 }

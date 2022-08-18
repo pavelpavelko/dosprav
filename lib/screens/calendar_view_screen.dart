@@ -6,6 +6,8 @@ import 'package:dosprav/providers/view_models_provider.dart';
 import 'package:dosprav/models/view_model.dart';
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/calendar_view.dart';
+import 'package:dosprav/models/home_slot.dart';
+import 'package:dosprav/providers/home_slots_provider.dart';
 
 class CalendarViewScreen extends StatelessWidget {
   const CalendarViewScreen({Key? key}) : super(key: key);
@@ -23,6 +25,9 @@ class CalendarViewScreen extends StatelessWidget {
         Provider.of<ViewModelsProvider>(context, listen: false);
     final viewModel = viewModelsProvider.getViewModelById(viewModelId!);
 
+    final homeSlotsProvider =
+        Provider.of<HomeSlotsProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Calendar"),
@@ -39,9 +44,25 @@ class CalendarViewScreen extends StatelessWidget {
                   );
                   Navigator.of(context).pop();
                   break;
+                case "Push":
+                  HomeSlot slotToPush = HomeSlot(slotType: SlotType.calendarView);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        homeSlotsProvider.getSnackBarMessage(
+                            context, slotToPush),
+                      ),
+                    ),
+                  );
+                  homeSlotsProvider.pushOnTop(slotToPush);
+                  break;
               }
             },
             itemBuilder: (context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: "Push",
+                child: Text("Push on Top"),
+              ),
               PopupMenuItem<String>(
                 value: "Postpone",
                 child: Text("Postpone"),

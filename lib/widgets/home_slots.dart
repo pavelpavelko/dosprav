@@ -8,6 +8,7 @@ import 'package:dosprav/models/home_slot.dart';
 import 'package:dosprav/widgets/daily_view.dart';
 import 'package:dosprav/widgets/categories_table_view.dart';
 import 'package:dosprav/widgets/category_list_view.dart';
+import 'package:dosprav/widgets/calendar_view.dart';
 
 class HomeSlots extends StatefulWidget {
   const HomeSlots({Key? key}) : super(key: key);
@@ -50,6 +51,10 @@ class _HomeSlotsState extends State<HomeSlots> {
         assert(slot.categoryId != null);
         return CategoryListView(
           categoryId: slot.categoryId!,
+          isShortMode: slots.length > 1,
+        );
+      case SlotType.calendarView:
+        return CalendarView(
           isShortMode: slots.length > 1,
         );
     }

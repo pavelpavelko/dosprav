@@ -20,10 +20,13 @@ class CalendarTableCell extends StatelessWidget {
     Key? key,
     required this.cellDate,
     required this.goalsSelectionMap,
+    this.isShortMode = false,
+
   }) : super(key: key);
 
   final DateTime cellDate;
   final Map<String, bool> goalsSelectionMap;
+  final bool isShortMode;
 
   List<Task> _filterTodaysActiveTask(List<Task> tasks) {
     List<Task> filteredTasks = tasks.where((task) {
@@ -217,7 +220,7 @@ class CalendarTableCell extends StatelessWidget {
       },
       child: Container(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        height: 75,
+        height: isShortMode ? 70 : 75,
         child: Stack(
           children: [
             if (trackRows.isEmpty)
