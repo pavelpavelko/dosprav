@@ -21,7 +21,6 @@ class CalendarTableCell extends StatelessWidget {
     required this.cellDate,
     required this.goalsSelectionMap,
     this.isShortMode = false,
-
   }) : super(key: key);
 
   final DateTime cellDate;
@@ -144,54 +143,45 @@ class CalendarTableCell extends StatelessWidget {
     Icon goalTrackIcon;
     switch (goalTrackState) {
       case GoalTrackState.occurred:
-        goalTrackIcon = Icon(
-          Icons.check_circle_outline_rounded,
-          size: trackIconSize,
-          color: goal.rule.type == GoalType.desire
-              ? Colors.green.withAlpha(150)
-              : Colors.red.withAlpha(150),
-        );
+        goalTrackIcon = Icon(Icons.check_circle_outline_rounded,
+            size: trackIconSize,
+            color:
+                goal.rule.type == GoalType.desire ? Colors.green : Colors.red);
         break;
       case GoalTrackState.missed:
-        goalTrackIcon = Icon(
-          Icons.cancel_outlined,
-          size: trackIconSize,
-          color: goal.rule.type == GoalType.avoid
-              ? Colors.green.withAlpha(150)
-              : Colors.red.withAlpha(150),
-        );
+        goalTrackIcon = Icon(Icons.cancel_outlined,
+            size: trackIconSize,
+            color:
+                goal.rule.type == GoalType.avoid ? Colors.green : Colors.red);
         break;
       case GoalTrackState.unknown:
-        goalTrackIcon = Icon(
-          Icons.question_mark_outlined,
-          size: trackIconSize,
-          color: Theme.of(context).colorScheme.primary.withAlpha(150),
-        );
+        goalTrackIcon = Icon(Icons.question_mark_outlined,
+            size: trackIconSize, color: Theme.of(context).colorScheme.primary);
         break;
     }
     if (isSelected) {
       return Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: EdgeInsets.only(bottom: 15),
-        child: goalTrackIcon);
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(bottom: 15),
+          child: goalTrackIcon);
     }
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-            Text(
-              "$shortName: ",
-              style: TextStyle(
-                height: 0.9,
-                fontSize: trackTextFontSize,
-                fontWeight: FontWeight.bold,
-                color: track != null
-                    ? Theme.of(context).colorScheme.primary.withAlpha(150)
-                    : Colors.grey.withAlpha(150),
-              ),
+          Text(
+            "$shortName: ",
+            style: TextStyle(
+              height: 0.9,
+              fontSize: trackTextFontSize,
+              fontWeight: FontWeight.bold,
+              color: track != null
+                  ? Theme.of(context).colorScheme.primary.withAlpha(150)
+                  : Colors.grey.withAlpha(150),
             ),
+          ),
           goalTrackIcon,
         ],
       ),
