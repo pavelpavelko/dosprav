@@ -89,7 +89,10 @@ class CategoriesTableHeaderItem extends StatelessWidget {
                   ),
                   onPressed: () {
                     HomeSlot newSlot;
-                    if (categoryId == CategoriesProvider.tempDailyCategoryId) {
+                    if (categoryId ==
+                        Provider.of<CategoriesProvider>(context, listen: false)
+                            .dailyListCategory
+                            .id) {
                       newSlot = HomeSlot(slotType: SlotType.dailyList);
                     } else {
                       newSlot = HomeSlot(
@@ -189,8 +192,12 @@ class CategoriesTableHeaderItem extends StatelessWidget {
                                   tasksProvider.updateTask(
                                     Task.fromTask(
                                       origin: task,
-                                      categoryId: CategoriesProvider
-                                          .tempAtticCategoryId,
+                                      categoryId:
+                                          Provider.of<CategoriesProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .atticCategory
+                                              .id,
                                     ),
                                   );
                                 }

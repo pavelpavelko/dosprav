@@ -11,8 +11,8 @@ class Task implements Comparable {
   final double priorityOrder;
 
   Task({
-    required this.id,
-    required this.uid,
+    this.id = "",
+    this.uid = "",
     required this.name,
     required this.description,
     required this.timestampCreated,
@@ -25,19 +25,22 @@ class Task implements Comparable {
 
   Task.fromTask({
     required Task origin,
+    String? id,
+    String? uid,
     String? name,
     String? description,
     bool? isComplete,
     String? categoryId,
+    DateTime? timestampCreated,
     DateTime? dueDate,
     Duration? intervalDuration,
     double? priorityOrder,
-  })  : id = origin.id,
-        uid = origin.uid,
-        timestampCreated = origin.timestampCreated,
+  })  : id = id ?? origin.id,
+        uid = uid ?? origin.uid,
         name = name ?? origin.name,
         description = description ?? origin.description,
         categoryId = categoryId ?? origin.categoryId,
+        timestampCreated = timestampCreated ?? origin.timestampCreated,
         isComplete = isComplete ?? origin.isComplete,
         dueDate = dueDate ?? origin.dueDate,
         priorityOrder = priorityOrder ?? origin.priorityOrder,

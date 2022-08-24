@@ -227,7 +227,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                   _controller?.animateTo(_controller!.value >= 0.5 ? 1 : 0);
                 },
                 child: Container(
-//                  height: widget.actionButtonSize,
                   margin: EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
@@ -238,7 +237,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                       IconButton(
                           iconSize: widget.actionButtonSize,
                           padding: EdgeInsets.zero,
-                          //splashRadius: widget.actionButtonSize / 2,
                           icon: Icon(
                             Icons.cancel_outlined,
                             color: widget.actionButtonColor,
@@ -249,17 +247,16 @@ class _CreateTaskSheetState extends State<CreateTaskSheet>
                       IconButton(
                         iconSize: widget.actionButtonSize,
                         padding: EdgeInsets.zero,
-                        //splashRadius: widget.actionButtonSize / 2,
                         icon: Icon(
                           widget.actionButtonIcon,
                           color: widget.actionButtonColor,
                         ),
                         onPressed: () {
                           if (_isSheetOpened()) {
-                            bool result =
-                                _taskComposeState.currentState?.tryCompose() ??
-                                    false;
-                            if (result) {
+                            if (_taskComposeState.currentState
+                                    ?.isComposeAvailable() ??
+                                false) {
+                              _taskComposeState.currentState?.tryCompose();
                               _controller?.reverse();
                             }
                           } else {

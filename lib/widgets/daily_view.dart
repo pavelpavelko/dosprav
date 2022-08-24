@@ -37,27 +37,66 @@ class _DailyViewState extends State<DailyView> {
   bool _isNextWeekVisible = false;
   bool _isSuggestedVisible = false;
 
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
     _isCompletedVisible = widget.isCompleteVisible;
     _isNextWeekVisible = widget.isNextWeekVisible;
     _isSuggestedVisible = widget.isSuggestedVisible;
+
+    if (widget.demoItems == null) {
+      _fetchCategoriesAndTasks();
+    }
+  }
+
+  Future<void> _fetchCategoriesAndTasks() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      if (mounted) {
+        await Provider.of<CategoriesProvider>(context, listen: false)
+            .fetchCategories();
+      }
+      if (mounted) {
+        await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot download tasks. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Category dailyCategory =
-        Provider.of<CategoriesProvider>(context, listen: false)
-            .getById(CategoriesProvider.tempDailyCategoryId);
+    var categoriesProvider =
+        Provider.of<CategoriesProvider>(context, listen: false);
+    Category dailyCategory = categoriesProvider.dailyListCategory;
     List<Task> items = widget.demoItems ??
-        Provider.of<TasksProvider>(context).categorizedMap[dailyCategory.id]!;
+        Provider.of<TasksProvider>(context).categorizedMap[dailyCategory.id] ??
+        [];
 
     var topPanelContainerSize = widget.isShortMode ? 28.0 : 35.0;
     var topPanelIzonSize = widget.isShortMode ? 20.0 : 25.0;
 
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: widget.isShortMode ? 5 : 10),
+      margin: EdgeInsets.symmetric(
+          horizontal: 10, vertical: widget.isShortMode ? 5 : 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
@@ -176,29 +215,32 @@ class _DailyViewState extends State<DailyView> {
               ],
             ),
           ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: ListTile.divideTiles(
-                color: Theme.of(context).colorScheme.primary,
-                tiles: items
-                    .where((task) => !task.isComplete || _isCompletedVisible)
-                    .where((task) {
-                  var durationDiff = _isNextWeekVisible
-                      ? Duration(days: 6)
-                      : Duration(days: 0);
-                  return TaskHelper.compareDatesByDays(
-                          task.dueDate, DateTime.now().add(durationDiff)) <=
-                      0;
-                }).map(
-                  (task) => DailyViewListItem(
-                    task: task,
-                    isShortMode: widget.isShortMode,
+          _isLoading
+              ? Expanded(child: Center(child: CircularProgressIndicator()))
+              : Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: ListTile.divideTiles(
+                      color: Theme.of(context).colorScheme.primary,
+                      tiles: items
+                          .where(
+                              (task) => !task.isComplete || _isCompletedVisible)
+                          .where((task) {
+                        var durationDiff = _isNextWeekVisible
+                            ? Duration(days: 6)
+                            : Duration(days: 0);
+                        return TaskHelper.compareDatesByDays(task.dueDate,
+                                DateTime.now().add(durationDiff)) <=
+                            0;
+                      }).map(
+                        (task) => DailyViewListItem(
+                          task: task,
+                          isShortMode: widget.isShortMode,
+                        ),
+                      ),
+                    ).toList(),
                   ),
                 ),
-              ).toList(),
-            ),
-          ),
         ],
       ),
     );

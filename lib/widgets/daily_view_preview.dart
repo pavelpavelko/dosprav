@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/widgets/daily_view.dart';
 import 'package:dosprav/widgets/daily_view_list_item.dart';
-import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/widgets/view_preview.dart';
 
 class DailyViewPreview extends StatelessWidget {
@@ -23,22 +22,18 @@ class DailyViewPreview extends StatelessWidget {
   List<Task> _getTutorialTasks() {
     var result = [
       Task(
-        id: UniqueKey().toString(),
-        uid: "",
         name: "Pass the tutorial",
         description: "",
-        categoryId: CategoriesProvider.tempStudyCategoryId,
+        categoryId: "",
         timestampCreated: DateTime.now(),
         dueDate: DateTime.now(),
         intervalDuration: Duration(days: 0),
         priorityOrder: 1,
       ),
       Task(
-        id: UniqueKey().toString(),
-        uid: "",
         name: "Daily Workouts",
         description: "",
-        categoryId: CategoriesProvider.tempStudyCategoryId,
+        categoryId: "",
         timestampCreated: DateTime.now(),
         dueDate: DateTime.now(),
         intervalDuration: Duration(days: 1),

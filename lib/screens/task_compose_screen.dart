@@ -16,6 +16,8 @@ class _TaskComposeScreenState extends State<TaskComposeScreen> {
 
   bool _taskChanged = false;
 
+  bool _isSaving = false;
+
   void _updateTaskChanged(bool isChanged) {
     if (_taskChanged != isChanged) {
       setState(() {
@@ -93,10 +95,20 @@ class _TaskComposeScreenState extends State<TaskComposeScreen> {
             IconButton(
               onPressed: _taskChanged
                   ? () {
-                      bool result =
-                          _taskComposeState.currentState?.tryCompose() ?? false;
-                      if (result) {
-                        Navigator.of(context).pop();
+                      setState(() {
+                        _isSaving = true;
+                      });
+                      if (_taskComposeState.currentState
+                              ?.isComposeAvailable() ??
+                          false) {
+                        _taskComposeState.currentState
+                            ?.tryCompose()
+                            .then((value) {
+                          Navigator.of(context).pop();
+                          setState(() {
+                            _isSaving = false;
+                          });
+                        });
                       }
                     }
                   : null,
@@ -105,13 +117,15 @@ class _TaskComposeScreenState extends State<TaskComposeScreen> {
             )
           ],
         ),
-        body: SingleChildScrollView(
-          child: TaskCompose(
-            key: _taskComposeState,
-            updateTaskChanged: _updateTaskChanged,
-            taskId: taskId,
-          ),
-        ),
+        body: _isSaving
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: TaskCompose(
+                  key: _taskComposeState,
+                  updateTaskChanged: _updateTaskChanged,
+                  taskId: taskId,
+                ),
+              ),
       ),
     );
   }

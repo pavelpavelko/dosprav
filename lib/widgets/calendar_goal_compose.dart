@@ -107,14 +107,14 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
       if (newGoal.rule.type == GoalType.desire) {
         Provider.of<TasksProvider>(context, listen: false).addTask(
           Task(
-            id: UniqueKey().toString(),
-            uid: "",
             name: newGoal.desireTaskName!,
             description: "",
             dueDate: DateTime.now(),
             intervalDuration: Duration(days: 1),
             timestampCreated: DateTime.now(),
-            categoryId: CategoriesProvider.tempDailyCategoryId,
+            categoryId: Provider.of<CategoriesProvider>(context, listen: false)
+                .dailyListCategory
+                .id,
           ),
         );
       }

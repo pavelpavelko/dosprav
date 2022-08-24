@@ -6,6 +6,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/widgets/category_list.dart';
+import 'package:dosprav/providers/tasks_provider.dart';
 
 class CategoriesTableView extends StatefulWidget {
   const CategoriesTableView({
@@ -50,8 +51,13 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
       setState(() {
         _isLoading = true;
       });
-      await Provider.of<CategoriesProvider>(context, listen: false)
-          .fetchCategories();
+      if (mounted) {
+        await Provider.of<CategoriesProvider>(context, listen: false)
+            .fetchCategories();
+      }
+      if (mounted) {
+        await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

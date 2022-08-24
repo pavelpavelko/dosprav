@@ -7,24 +7,22 @@ import 'package:http/http.dart' as http;
 import 'package:dosprav/models/category.dart';
 
 class CategoriesProvider with ChangeNotifier {
-  static final String tempStudyCategoryId = UniqueKey().toString();
-  static final String tempDailyCategoryId = UniqueKey().toString();
-  static final String tempAppDevelopmentCategoryId = UniqueKey().toString();
-  static final String tempAtticCategoryId = UniqueKey().toString();
-
   static const String _categoriesFbUrl =
       "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories.json";
 
   List<Category> _items = [];
 
+  static const String _dailyListCategoryName = "Daily List";
+  static const String _atticCategoryName = "Attic";
+
   final List<Category> _presetItems = [
     Category(
-      name: "Daily List",
+      name: _dailyListCategoryName,
       priorityOrder: 0,
       isEditable: false,
     ),
     Category(
-      name: "Attic",
+      name: _atticCategoryName,
       priorityOrder: 1,
       isEditable: false,
     ),
@@ -38,6 +36,30 @@ class CategoriesProvider with ChangeNotifier {
     var items = [..._items];
     items.sort();
     return items;
+  }
+
+  Category get dailyListCategory {
+   var index = _items.indexWhere((category) {
+      return category.name == _dailyListCategoryName &&
+          category.isEditable == false;
+    });
+    if(index >= 0){
+      return _items[index];
+    } else {
+      return _presetItems[0];
+    }
+  }
+
+  Category get atticCategory {
+   var index = _items.indexWhere((category) {
+      return category.name == _atticCategoryName &&
+          category.isEditable == false;
+    });
+    if(index >= 0){
+      return _items[index];
+    } else {
+      return _presetItems[1];
+    }
   }
 
   Future<void> _addPresetCategories() async {

@@ -67,39 +67,50 @@ class TaskComposeState extends State<TaskCompose> {
     super.dispose();
   }
 
-  bool tryCompose() {
-    if (_taskNameController.text.trim().length < 3) {
+  bool isComposeAvailable() {
+    if (_taskNameController.text.trim().isEmpty) {
       setState(() {
         _isNameLongEnought = false;
       });
       return false;
     }
+    return true;
+  }
 
-    Task newTask;
-    if (_taskToEdit != null) {
-      newTask = Task.fromTask(
-          origin: _taskToEdit!,
+  Future<void> tryCompose() async {
+    try {
+      Task newTask;
+      if (_taskToEdit != null) {
+        newTask = Task.fromTask(
+            origin: _taskToEdit!,
+            name: _taskNameController.text.trim(),
+            description: _taskDescriptionController.text.trim(),
+            dueDate: _dueDate,
+            intervalDuration: _intervalDuration,
+            categoryId: _category!.id);
+        await _tasksProvider!.updateTask(newTask);
+      } else {
+        newTask = Task(
           name: _taskNameController.text.trim(),
           description: _taskDescriptionController.text.trim(),
           dueDate: _dueDate,
           intervalDuration: _intervalDuration,
-          categoryId: _category!.id);
-      _tasksProvider!.updateTask(newTask);
-    } else {
-      newTask = Task(
-        id: UniqueKey().toString(),
-        uid: "",
-        name: _taskNameController.text.trim(),
-        description: _taskDescriptionController.text.trim(),
-        dueDate: _dueDate,
-        intervalDuration: _intervalDuration,
-        timestampCreated: DateTime.now(),
-        categoryId: _category!.id,
+          timestampCreated: DateTime.now(),
+          categoryId: _category!.id,
+        );
+        await _tasksProvider!.addTask(newTask);
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot save task. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
       );
-      _tasksProvider!.addTask(newTask);
     }
-
-    return true;
   }
 
   bool checkIsTaskChanged() {
@@ -161,7 +172,7 @@ class TaskComposeState extends State<TaskCompose> {
                       fontWeight: FontWeight.normal,
                     ),
                     errorText: !_isNameLongEnought
-                        ? 'Name should be three characterss at least'
+                        ? "Task name must not be empty."
                         : null,
                   ),
                   style: TextStyle(

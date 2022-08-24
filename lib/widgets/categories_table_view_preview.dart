@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:dosprav/models/task.dart';
-import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/widgets/view_preview.dart';
-import 'package:dosprav/widgets/categories_table_view.dart';
 
 class CategoriesTableViewPreview extends StatelessWidget {
   CategoriesTableViewPreview({ Key? key }) : super(key: key);
@@ -20,22 +18,18 @@ class CategoriesTableViewPreview extends StatelessWidget {
   List<Task> _getTutorialTasks() {
     var result = [
       Task(
-        id: UniqueKey().toString(),
-        uid: "",
         name: "Pass the tutorial",
         description: "",
-        categoryId: CategoriesProvider.tempStudyCategoryId,
+        categoryId: "",
         timestampCreated: DateTime.now(),
         dueDate: DateTime.now(),
         intervalDuration: Duration(days: 0),
         priorityOrder: 1,
       ),
       Task(
-        id: UniqueKey().toString(),
-        uid: "",
         name: "Daily Workouts",
         description: "",
-        categoryId: CategoriesProvider.tempStudyCategoryId,
+        categoryId: "",
         timestampCreated: DateTime.now(),
         dueDate: DateTime.now(),
         intervalDuration: Duration(days: 1),
