@@ -110,9 +110,8 @@ class CategoriesTableViewPreview extends StatelessWidget {
 
     return ViewPreview(
       previewPages: pages,
-      backgroundView: CategoriesTableView(
-//        demoItems: _getTutorialTasks(),
-      ),
+//      backgroundView: CategoriesTableView(),
+      backgroundView: Container(),
     );
   }
 }

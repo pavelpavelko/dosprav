@@ -21,6 +21,8 @@ class _CategoryComposeState extends State<CategoryCompose> {
   String _categoryName = "";
   bool _isErrorTextVisible = false;
 
+  bool _isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,26 +47,46 @@ class _CategoryComposeState extends State<CategoryCompose> {
     setState(() {
       if (_isSaveAvailable()) {
         _saveCategory();
-        Navigator.of(context).pop();
       } else {
         _isErrorTextVisible = true;
       }
     });
   }
 
-  void _saveCategory() {
-    Category newCategory;
-    if (_categoryToEdit != null) {
-      newCategory =
-          Category.fromCategory(origin: _categoryToEdit!, name: _categoryName);
-      _categoriesProvider.updateCategory(newCategory);
-    } else {
-      newCategory = Category(
-        name: _categoryName,
-        id: UniqueKey().toString(),
-        uid: "",
+  Future<void> _saveCategory() async {
+    try {
+      setState(() {
+        _isSaving = true;
+      });
+      if (_categoryToEdit != null) {
+        await _categoriesProvider.updateCategory(
+          Category.fromCategory(
+            origin: _categoryToEdit!,
+            name: _categoryName,
+          ),
+        );
+      } else {
+        await _categoriesProvider.addCategory(
+          Category(
+            name: _categoryName,
+          ),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Saving category failed. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
       );
-      _categoriesProvider.addCategory(newCategory);
+    } finally {
+      setState(() {
+        _isSaving = false;
+      });
+      Navigator.of(context).pop();
     }
   }
 
@@ -97,30 +119,39 @@ class _CategoryComposeState extends State<CategoryCompose> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
-            child: TextField(
-              textInputAction: TextInputAction.done,
-              keyboardType: TextInputType.name,
-              controller: _categoryNameController,
-              onChanged: (value) {
-                setState(() {
-                  _categoryName = value;
-                });
-              },
-              onSubmitted: (value) => _trySaveCategory(),
-              decoration: InputDecoration(
-                labelText: "Category Name",
-                errorText: _isErrorTextVisible ? "Category name must not be empty" : null,
+          _isSaving
+              ? Padding(
+                  padding: EdgeInsets.only(top: 25, bottom: 25),
+                  child: CircularProgressIndicator(),
+                )
+              : Padding(
+                  padding:
+                      EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
+                  child: TextField(
+                    textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.name,
+                    controller: _categoryNameController,
+                    onChanged: (value) {
+                      setState(() {
+                        _categoryName = value;
+                      });
+                    },
+                    onSubmitted: (value) => _trySaveCategory(),
+                    decoration: InputDecoration(
+                      labelText: "Category Name",
+                      errorText: _isErrorTextVisible
+                          ? "Category name must not be empty"
+                          : null,
+                    ),
+                  ),
+                ),
+          if (!_isSaving)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Divider(
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Divider(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

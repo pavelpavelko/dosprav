@@ -197,7 +197,19 @@ class CategoriesTableHeaderItem extends StatelessWidget {
                               }
                               Provider.of<CategoriesProvider>(context,
                                       listen: false)
-                                  .removeCategory(categoryId);
+                                  .removeCategory(categoryId)
+                                  .onError((error, stackTrace) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Cannot delete category. Please try again later.",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).errorColor,
+                                  ),
+                                );
+                              });
                               homeSlotsProvider.removeIfExist(categoryId);
                             },
                           ),

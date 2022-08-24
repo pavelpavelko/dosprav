@@ -29,6 +29,7 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
   bool _isCompletedVisible = false;
   bool _isCarouselMode = false;
   bool _isEditMode = false;
+  bool _isLoading = false;
 
   final CarouselController _carouselController = CarouselController();
 
@@ -40,6 +41,54 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
     _isCompletedVisible = widget.isCompletedVisible;
     _isCarouselMode = widget.isCarouselMode;
     _isEditMode = widget.isEditMode;
+
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<CategoriesProvider>(context, listen: false)
+          .fetchCategories();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot download categories. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _reorderCategories(int oldIndex, int newIndex) async {
+    try {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      await Provider.of<CategoriesProvider>(context, listen: false)
+          .updateOrderIndex(oldIndex, newIndex);
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot reorder categories. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    }
   }
 
   List<Widget> _createColumnsList() {
@@ -133,7 +182,6 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                     });
                   },
                   aspectRatio: widget.isShortMode ? 2 / 1.05 : 3 / 3.7,
-//                height: 200, //constraints.maxHeight,
                   initialPage: _carouselCurrentPage,
                 ),
               ),
@@ -301,33 +349,28 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
                 ],
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(5),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                  child: _isCarouselMode
-                      ? _createCarousel()
-                      : ReorderableListView(
-                          scrollDirection: Axis.horizontal,
-                          proxyDecorator: _columnProxyDecorator,
-                          children: _createColumnsList(),
-                          onReorder: (int oldIndex, int newIndex) {
-                            setState(() {
-                              if (oldIndex < newIndex) {
-                                newIndex -= 1;
-                              }
-                              categoriesProvider.updateOrderIndex(
-                                  oldIndex, newIndex);
-                            });
-                          },
+            _isLoading
+                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                : Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(5),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
                         ),
-                ),
-              ),
-            ),
+                        child: _isCarouselMode
+                            ? _createCarousel()
+                            : ReorderableListView(
+                                scrollDirection: Axis.horizontal,
+                                proxyDecorator: _columnProxyDecorator,
+                                children: _createColumnsList(),
+                                onReorder: (int oldIndex, int newIndex) =>
+                                    _reorderCategories(oldIndex, newIndex),
+                              ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

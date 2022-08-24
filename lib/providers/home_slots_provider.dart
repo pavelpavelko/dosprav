@@ -10,7 +10,7 @@ class HomeSlotsProvider with ChangeNotifier {
 
   List<HomeSlot> _items = [
     HomeSlot(slotType: SlotType.calendarView),
-    HomeSlot(slotType: SlotType.dailyList),
+//    HomeSlot(slotType: SlotType.dailyList),
   ];
 
   List<HomeSlot> get items {
