@@ -52,3 +52,4 @@ windows/
 pubspec.lock
 analysis_options.yaml
 .metadata
+Podfile.lock
