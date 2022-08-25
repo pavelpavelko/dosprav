@@ -2,8 +2,8 @@ import 'package:dosprav/models/calendar_goal_rule.dart';
 
 class CalendarGoal {
   CalendarGoal({
-    required this.id,
-    required this.uid,
+    this.id = "",
+    this.uid = "",
     required this.name,
     this.desireTaskName,
     required this.rule,
@@ -17,11 +17,13 @@ class CalendarGoal {
 
   CalendarGoal.fromGoal({
     required CalendarGoal origin,
+    String? id,
+    String? uid,
     String? name,
     String? desireTaskName,
     CalendarGoalRule? rule,
-  })  : id = origin.id,
-        uid = origin.uid,
+  })  : id = id ?? origin.id,
+        uid = uid ?? origin.uid,
         name = name ?? origin.name,
         desireTaskName = desireTaskName ?? origin.desireTaskName,
         rule = rule ?? origin.rule;

@@ -1,24 +1,26 @@
 class CalendarGoalTrack {
   CalendarGoalTrack({
-    required this.id,
-    required this.uid,
+    this.id = "",
+    this.uid = "",
     required this.date,
     required this.trackStateMap,
   });
 
   CalendarGoalTrack.fromTrack({
     required CalendarGoalTrack origin,
+    String? id,
+    String? uid,
     DateTime? date,
-    Map<String, GoalTrackState>? trackStateMap,
-  })  : id = origin.id,
-        uid = origin.uid,
+    Map<String, int>? trackStateMap,
+  })  : id = id ?? origin.id,
+        uid = uid ?? origin.uid,
         date = date ?? origin.date,
         trackStateMap = trackStateMap ?? origin.trackStateMap;
 
   final String id;
   final String uid;
   final DateTime date;
-  final Map<String, GoalTrackState> trackStateMap;
+  final Map<String, int> trackStateMap;
 }
 
 enum GoalTrackState {

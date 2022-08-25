@@ -37,11 +37,11 @@ class CalendarGoalItem extends StatelessWidget {
       var date = now.subtract(Duration(days: dayIndex));
       var track = tracksProvider.getTrackByDate(date);
       if(goal.rule.type == GoalType.desire){
-        if(track != null && track.trackStateMap[goalId] != null && track.trackStateMap[goalId] == GoalTrackState.occurred){
+        if(track != null && track.trackStateMap[goalId] != null && track.trackStateMap[goalId] == GoalTrackState.occurred.index){
           occurrenceNumber++;
         }
       } else {
-        if(track != null && track.trackStateMap[goalId] != null && track.trackStateMap[goalId] == GoalTrackState.missed){
+        if(track != null && track.trackStateMap[goalId] != null && track.trackStateMap[goalId] == GoalTrackState.missed.index){
           occurrenceNumber--;
         }
       }

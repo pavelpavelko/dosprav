@@ -29,6 +29,8 @@ class _CalendarGoalTrackComposeState extends State<CalendarGoalTrackCompose> {
 
   CalendarGoalTrack? _existingTrack;
 
+  bool _isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -44,8 +46,9 @@ class _CalendarGoalTrackComposeState extends State<CalendarGoalTrackCompose> {
     for (var goal in goals) {
       var trackState = GoalTrackState.unknown;
       if (_existingTrack != null) {
-        var goalTrackState = _existingTrack?.trackStateMap[goal.id];
-        trackState = goalTrackState ?? GoalTrackState.unknown;
+        var goalTrackStateIndex = _existingTrack?.trackStateMap[goal.id] ??
+            GoalTrackState.unknown.index;
+        trackState = GoalTrackState.values[goalTrackStateIndex];
       }
       _trackStateMap[goal.id] = trackState;
     }
@@ -121,22 +124,47 @@ class _CalendarGoalTrackComposeState extends State<CalendarGoalTrackCompose> {
     return result;
   }
 
-  void saveTrack() {
-    CalendarGoalTrack newTrack;
-    if (_existingTrack != null) {
-      newTrack = CalendarGoalTrack.fromTrack(
-        origin: _existingTrack!,
-        trackStateMap: _trackStateMap,
+  Future<void> _saveTrack() async {
+    try {
+      setState(() {
+        _isSaving = true;
+      });
+
+      Map<String, int> transformedMap = {};
+      for (var goalId in _trackStateMap.keys) {
+        transformedMap[goalId] =
+            _trackStateMap[goalId]?.index ?? GoalTrackState.unknown.index;
+      }
+
+      CalendarGoalTrack newTrack;
+      if (_existingTrack != null) {
+        newTrack = CalendarGoalTrack.fromTrack(
+          origin: _existingTrack!,
+          trackStateMap: transformedMap,
+        );
+        await _tracksProvider.updateGoalTrack(newTrack);
+      } else {
+        newTrack = CalendarGoalTrack(
+          date: widget.trackDate,
+          trackStateMap: transformedMap,
+        );
+        await _tracksProvider.addGoalTrack(newTrack);
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Saving calendar goal track failed. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
       );
-      _tracksProvider.updateGoalTrack(newTrack);
-    } else {
-      newTrack = CalendarGoalTrack(
-        id: UniqueKey().toString(),
-        uid: "",
-        date: widget.trackDate,
-        trackStateMap: _trackStateMap,
-      );
-      _tracksProvider.addGoalTrack(newTrack);
+    } finally {
+      setState(() {
+        _isSaving = false;
+      });
+      Navigator.of(context).pop();
     }
   }
 
@@ -181,29 +209,32 @@ class _CalendarGoalTrackComposeState extends State<CalendarGoalTrackCompose> {
           SizedBox(
             height: 5,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Spacer(),
-              TextButton(
-                style: ButtonStyle(),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("CANCEL"),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: TextButton(
-                  onPressed: () {
-                    saveTrack();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("SAVE"),
-                ),
-              ),
-            ],
-          )
+          _isSaving
+              ? Padding(
+                  padding: EdgeInsets.all(6),
+                  child: Center(child: CircularProgressIndicator()))
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Spacer(),
+                    TextButton(
+                      style: ButtonStyle(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("CANCEL"),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: TextButton(
+                        onPressed: () {
+                          _saveTrack();
+                        },
+                        child: Text("SAVE"),
+                      ),
+                    ),
+                  ],
+                )
         ],
       ),
     );

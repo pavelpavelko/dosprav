@@ -138,8 +138,9 @@ class CalendarTableCell extends StatelessWidget {
     double trackTextFontSize = 13;
 
     var shortName = TaskHelper.getShortName(goal.name);
-    var goalTrackState =
-        track?.trackStateMap[goal.id] ?? GoalTrackState.unknown;
+    var goalTrackStateIndex =
+        track?.trackStateMap[goal.id] ?? GoalTrackState.unknown.index;
+    GoalTrackState goalTrackState = GoalTrackState.values[goalTrackStateIndex];
     Icon goalTrackIcon;
     switch (goalTrackState) {
       case GoalTrackState.occurred:

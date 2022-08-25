@@ -37,6 +37,8 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
 
   late GoalType _goalType;
 
+  bool _isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -72,52 +74,94 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
         _isTaskNameErrorTextVisible = !isTaskNameValid;
       } else {
         _saveGoal();
-        Navigator.of(context).pop();
       }
     });
   }
 
-  void _saveGoal() {
-    CalendarGoal newGoal;
-    if (_goalToEdit != null) {
-      newGoal = CalendarGoal.fromGoal(
-        origin: _goalToEdit!,
-        name: _goalName,
-        desireTaskName: _goalTaskName,
-        rule: CalendarGoalRule(
-          type: _goalType,
-          numDaysForYellow: _numDaysForYellow,
-          numDaysForGreen: _numDaysForGreen,
+  Future<void> _removeGoal() async {
+    try {
+      setState(() {
+        _isSaving = true;
+      });
+      await _goalsProvider.removeGoal(_goalToEdit!.id);
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Calendar goal deletion failed. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
         ),
       );
-      _goalsProvider.updateGoal(newGoal);
-    } else {
-      newGoal = CalendarGoal(
-        id: UniqueKey().toString(),
-        uid: "",
-        name: _goalName,
-        desireTaskName: _goalTaskName,
-        rule: CalendarGoalRule(
-          type: _goalType,
-          numDaysForYellow: _numDaysForYellow,
-          numDaysForGreen: _numDaysForGreen,
-        ),
-      );
-      _goalsProvider.addGoal(newGoal);
-      if (newGoal.rule.type == GoalType.desire) {
-        Provider.of<TasksProvider>(context, listen: false).addTask(
-          Task(
-            name: newGoal.desireTaskName!,
-            description: "",
-            dueDate: DateTime.now(),
-            intervalDuration: Duration(days: 1),
-            timestampCreated: DateTime.now(),
-            categoryId: Provider.of<CategoriesProvider>(context, listen: false)
-                .dailyListCategory
-                .id,
+    } finally {
+      setState(() {
+        _isSaving = false;
+      });
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _saveGoal() async {
+    try {
+      setState(() {
+        _isSaving = true;
+      });
+      CalendarGoal newGoal;
+      if (_goalToEdit != null) {
+        newGoal = CalendarGoal.fromGoal(
+          origin: _goalToEdit!,
+          name: _goalName,
+          desireTaskName: _goalTaskName,
+          rule: CalendarGoalRule(
+            type: _goalType,
+            numDaysForYellow: _numDaysForYellow,
+            numDaysForGreen: _numDaysForGreen,
           ),
         );
+        await _goalsProvider.updateGoal(newGoal);
+      } else {
+        newGoal = CalendarGoal(
+          name: _goalName,
+          desireTaskName: _goalTaskName,
+          rule: CalendarGoalRule(
+            type: _goalType,
+            numDaysForYellow: _numDaysForYellow,
+            numDaysForGreen: _numDaysForGreen,
+          ),
+        );
+        await _goalsProvider.addGoal(newGoal);
+        if (newGoal.rule.type == GoalType.desire && mounted) {
+          await Provider.of<TasksProvider>(context, listen: false).addTask(
+            Task(
+              name: newGoal.desireTaskName!,
+              description: "",
+              dueDate: DateTime.now(),
+              intervalDuration: Duration(days: 1),
+              timestampCreated: DateTime.now(),
+              categoryId:
+                  Provider.of<CategoriesProvider>(context, listen: false)
+                      .dailyListCategory
+                      .id,
+            ),
+          );
+        }
       }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Saving calendar goal failed. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isSaving = false;
+      });
+      Navigator.of(context).pop();
     }
   }
 
@@ -389,68 +433,71 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (_goalToEdit != null)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: TextButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: Text("Are you sure?"),
-                          content: Text(
-                              "Do you want to delete the ${_goalToEdit!.name} goal?"),
-                          actions: [
-                            TextButton(
-                                child: Text("NO"),
-                                onPressed: () {
-                                  Navigator.of(ctx).pop(false);
-                                }),
-                            TextButton(
-                              child: Text("YES"),
-                              onPressed: () {
-                                Navigator.of(ctx).pop(true);
-                              },
+          _isSaving
+              ? Padding(
+                  padding: EdgeInsets.all(6),
+                  child: Center(child: CircularProgressIndicator()))
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (_goalToEdit != null)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: TextButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text("Are you sure?"),
+                                content: Text(
+                                    "Do you want to delete the ${_goalToEdit!.name} goal?"),
+                                actions: [
+                                  TextButton(
+                                      child: Text("NO"),
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop(false);
+                                      }),
+                                  TextButton(
+                                    child: Text("YES"),
+                                    onPressed: () {
+                                      Navigator.of(ctx).pop(true);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ).then((value) {
+                              if (value) {
+                                _removeGoal();
+                              }
+                            });
+                          },
+                          child: Text(
+                            "DELETE",
+                            style: TextStyle(
+                              color: Theme.of(context).errorColor,
                             ),
-                          ],
+                          ),
                         ),
-                      ).then((value) {
-                        if (value) {
-                          Navigator.of(context).pop();
-                          _goalsProvider.removeGoal(_goalToEdit!.id);
-                        }
-                      });
-                    },
-                    child: Text(
-                      "DELETE",
-                      style: TextStyle(
-                        color: Theme.of(context).errorColor,
+                      ),
+                    Spacer(),
+                    TextButton(
+                      style: ButtonStyle(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("CANCEL"),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: TextButton(
+                        onPressed: () {
+                          _trySaveGoal();
+                        },
+                        child: Text("SAVE"),
                       ),
                     ),
-                  ),
-                ),
-              Spacer(),
-              TextButton(
-                style: ButtonStyle(),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("CANCEL"),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: TextButton(
-                  onPressed: () {
-                    _trySaveGoal();
-                  },
-                  child: Text("SAVE"),
-                ),
-              ),
-            ],
-          )
+                  ],
+                )
         ],
       ),
     );

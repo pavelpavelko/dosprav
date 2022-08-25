@@ -6,6 +6,9 @@ import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/widgets/calendar_goal_item.dart';
 import 'package:dosprav/widgets/calendar_goal_compose.dart';
 import 'package:dosprav/widgets/calendar_table.dart';
+import 'package:dosprav/providers/categories_provider.dart';
+import 'package:dosprav/providers/tasks_provider.dart';
+import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({
@@ -21,6 +24,56 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarViewState extends State<CalendarView> {
   final Map<String, bool> _goalsSelectionMap = {};
+
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCalendarGoals();
+  }
+
+  Future<void> _fetchCalendarGoals() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      if (mounted) {
+        await Provider.of<CategoriesProvider>(context, listen: false)
+            .fetchCategories();
+      }
+      if (mounted) {
+        await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
+      }
+
+      if (mounted) {
+        await Provider.of<CalendarGoalsProvider>(context, listen: false)
+            .fetchCalendarGoals();
+      }
+
+      if (mounted) {
+        await Provider.of<CalendarGoalTracksProvider>(context, listen: false)
+            .fetchCalendarGoalTracks();
+      }
+      
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot download calendar goals. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   List<Widget> _createGoalsTopPanel(CalendarGoalsProvider goalsProvider) {
     List<Widget> result = [];
@@ -91,12 +144,14 @@ class _CalendarViewState extends State<CalendarView> {
                     icon: Icon(
                       Icons.add_circle_outlined,
                       color: goalsProvider.items.length <
-                              CalendarGoalsProvider.maxGoalsNumber
+                                  CalendarGoalsProvider.maxGoalsNumber &&
+                              !_isLoading
                           ? Theme.of(context).colorScheme.secondary
                           : Colors.grey,
                     ),
                     onPressed: goalsProvider.items.length <
-                            CalendarGoalsProvider.maxGoalsNumber
+                                CalendarGoalsProvider.maxGoalsNumber &&
+                            !_isLoading
                         ? () {
                             showDialog(
                               context: context,
@@ -111,15 +166,17 @@ class _CalendarViewState extends State<CalendarView> {
               ],
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(5),
-              child: CalendarTable(
-                goalsSelectionMap: _goalsSelectionMap,
-                isShortMode: widget.isShortMode,
-              ),
-            ),
-          ),
+          _isLoading
+              ? Expanded(child: Center(child: CircularProgressIndicator()))
+              : Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(5),
+                    child: CalendarTable(
+                      goalsSelectionMap: _goalsSelectionMap,
+                      isShortMode: widget.isShortMode,
+                    ),
+                  ),
+                ),
         ],
       ),
     );
