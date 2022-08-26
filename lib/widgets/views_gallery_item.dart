@@ -47,12 +47,21 @@ class ViewsGalleryItem extends StatelessWidget {
                   (value) {
                     if (value != null && value) {
                       Provider.of<ViewModelsProvider>(context, listen: false)
-                          .updateViewModel(
-                        ViewModel.fromViewModel(
-                          origin: viewModel,
-                          isActivated: true,
-                        ),
-                      );
+                          .updateViewModelActiveStatus(
+                        viewModel.id,
+                        true,
+                      )
+                          .onError((error, stackTrace) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Cannot activate view. Please try again later.",
+                              textAlign: TextAlign.center,
+                            ),
+                            backgroundColor: Theme.of(context).errorColor,
+                          ),
+                        );
+                      });
                       Navigator.of(context)
                           .pushNamed(viewScreenRouteName, arguments: {
                         "viewModelId": viewModel.id,
@@ -77,6 +86,7 @@ class ViewsGalleryItem extends StatelessWidget {
                     angle: -pi / 4,
                     child: Text(
                       viewModel.name,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,

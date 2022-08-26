@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dosprav/providers/view_models_provider.dart';
-import 'package:dosprav/models/view_model.dart';
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/categories_table_view.dart';
 import 'package:dosprav/widgets/category_compose.dart';
@@ -11,7 +10,6 @@ import 'package:dosprav/providers/home_slots_provider.dart';
 import 'package:dosprav/models/home_slot.dart';
 
 class CategoriesTableViewScreen extends StatelessWidget {
-
   static const String routeName = "/categories-table-view";
 
   const CategoriesTableViewScreen({Key? key}) : super(key: key);
@@ -25,7 +23,6 @@ class CategoriesTableViewScreen extends StatelessWidget {
 
     final viewModelsProvider =
         Provider.of<ViewModelsProvider>(context, listen: false);
-    final viewModel = viewModelsProvider.getViewModelById(viewModelId!);
 
     final homeSlotsProvider =
         Provider.of<HomeSlotsProvider>(context, listen: false);
@@ -57,12 +54,23 @@ class CategoriesTableViewScreen extends StatelessWidget {
             onSelected: (String item) {
               switch (item) {
                 case "Postpone":
-                  viewModelsProvider.updateViewModel(
-                    ViewModel.fromViewModel(
-                      origin: viewModel,
-                      isActivated: false,
-                    ),
-                  );
+                  viewModelsProvider
+                      .updateViewModelActiveStatus(
+                    viewModelId!,
+                    false,
+                  )
+                      .onError((error, stackTrace) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "Cannot postpone Categories Table view. Please try again later.",
+                          textAlign: TextAlign.center,
+                        ),
+                        backgroundColor: Theme.of(context).errorColor,
+                      ),
+                    );
+                  });
+                  ;
                   Navigator.of(context).pop();
                   break;
                 case "Create":
