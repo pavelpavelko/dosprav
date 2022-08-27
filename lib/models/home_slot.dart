@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomeSlot {
@@ -18,9 +19,13 @@ class HomeSlot {
     return slotType == typedOther.slotType &&
         categoryId == typedOther.categoryId;
   }
-  
+
   @override
   int get hashCode => hashValues(slotType, categoryId);
+
+  static SlotType getHomeSlotTypeByDescription(String description) {
+    return SlotType.values.firstWhere((e) => describeEnum(e) == description);
+  }
 }
 
 enum SlotType {

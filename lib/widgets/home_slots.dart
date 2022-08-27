@@ -1,3 +1,4 @@
+import 'package:dosprav/providers/categories_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -18,21 +19,63 @@ class HomeSlots extends StatefulWidget {
 }
 
 class _HomeSlotsState extends State<HomeSlots> {
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchHomeSlots();
+  }
+
+  Future<void> _fetchHomeSlots() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await Provider.of<CategoriesProvider>(context, listen: false)
+          .fetchCategories();
+
+      if (mounted) {
+        await Provider.of<HomeSlotsProvider>(context, listen: false)
+            .fetchHomeSlots();
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot download calendar goals. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var homeSlotsProvider =
         Provider.of<HomeSlotsProvider>(context, listen: true);
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: 5,
-      ),
-      child: Column(
-        children: homeSlotsProvider.items.map((slot) {
-          return Expanded(child: _createViewBySlot(slot));
-        }).toList(),
-      ),
-    );
+    return _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: 5,
+            ),
+            child: Column(
+              children: homeSlotsProvider.items.map((slot) {
+                return Expanded(child: _createViewBySlot(slot));
+              }).toList(),
+            ),
+          );
   }
 
   Widget _createViewBySlot(HomeSlot slot) {

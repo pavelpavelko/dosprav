@@ -1,9 +1,17 @@
+import 'package:dosprav/models/calendar_goal_track.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
 
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/home_slots.dart';
 import 'package:dosprav/widgets/views_gallery.dart';
+import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
+import 'package:dosprav/providers/calendar_goals_provider.dart';
+import 'package:dosprav/providers/categories_provider.dart';
+import 'package:dosprav/providers/home_slots_provider.dart';
+import 'package:dosprav/providers/tasks_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -15,24 +23,19 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedTabIndex = 0;
 
-  static const List<Widget> _tabViews = <Widget>[
-    HomeSlots(),
-    ViewsGallery(),
-    Center(
-      child: ElevatedButton(
-        onPressed: _logout,
-        child: Text("LOGOUT"),
-      ),
-    ),
-  ];
-
   void _onTabTapped(int index) {
     setState(() {
       _selectedTabIndex = index;
     });
   }
 
-  static void _logout() {
+  void _logout(BuildContext context) {
+    Provider.of<CategoriesProvider>(context, listen: false).clear();
+    Provider.of<TasksProvider>(context, listen: false).clear();
+    Provider.of<CalendarGoalsProvider>(context, listen: false).clear();
+    Provider.of<CalendarGoalTracksProvider>(context, listen: false).clear();
+    Provider.of<HomeSlotsProvider>(context, listen: false).clear();
+
     FirebaseAuth.instance.signOut();
   }
 
@@ -72,7 +75,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           actionButtonSize: 60,
           child: IndexedStack(
             index: _selectedTabIndex,
-            children: _tabViews,
+            children: [
+              HomeSlots(),
+              ViewsGallery(),
+              Center(
+                child: ElevatedButton(
+                  onPressed: (() => _logout(context)),
+                  child: Text("LOGOUT"),
+                ),
+              ),
+            ],
           ),
         ),
       ),

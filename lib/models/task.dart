@@ -1,6 +1,5 @@
 class Task implements Comparable {
   final String id;
-  final String uid;
   final String name;
   final String description;
   final DateTime timestampCreated;
@@ -12,7 +11,6 @@ class Task implements Comparable {
 
   Task({
     this.id = "",
-    this.uid = "",
     required this.name,
     required this.description,
     required this.timestampCreated,
@@ -26,7 +24,6 @@ class Task implements Comparable {
   Task.fromTask({
     required Task origin,
     String? id,
-    String? uid,
     String? name,
     String? description,
     bool? isComplete,
@@ -36,7 +33,6 @@ class Task implements Comparable {
     Duration? intervalDuration,
     double? priorityOrder,
   })  : id = id ?? origin.id,
-        uid = uid ?? origin.uid,
         name = name ?? origin.name,
         description = description ?? origin.description,
         categoryId = categoryId ?? origin.categoryId,

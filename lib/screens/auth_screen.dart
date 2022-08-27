@@ -35,6 +35,7 @@ class AuthScreenState extends State<AuthScreen> {
         userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
+        //userCredential.user.
         await userCredential.user?.updateDisplayName(username);
       }
     } on FirebaseAuthException catch (error) {

@@ -7,9 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:dosprav/models/category.dart';
 
 class CategoriesProvider with ChangeNotifier {
-  static const String _categoriesFbUrl =
-      "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories.json";
-
   List<Category> _items = [];
 
   static const String _dailyListCategoryName = "Daily List";
@@ -32,6 +29,11 @@ class CategoriesProvider with ChangeNotifier {
     return [..._items];
   }
 
+  void clear() {
+    _items = [];
+    notifyListeners();
+  }
+
   List<Category> get itemsSorted {
     var items = [..._items];
     items.sort();
@@ -39,11 +41,11 @@ class CategoriesProvider with ChangeNotifier {
   }
 
   Category get dailyListCategory {
-   var index = _items.indexWhere((category) {
+    var index = _items.indexWhere((category) {
       return category.name == _dailyListCategoryName &&
           category.isEditable == false;
     });
-    if(index >= 0){
+    if (index >= 0) {
       return _items[index];
     } else {
       return _presetItems[0];
@@ -51,11 +53,11 @@ class CategoriesProvider with ChangeNotifier {
   }
 
   Category get atticCategory {
-   var index = _items.indexWhere((category) {
+    var index = _items.indexWhere((category) {
       return category.name == _atticCategoryName &&
           category.isEditable == false;
     });
-    if(index >= 0){
+    if (index >= 0) {
       return _items[index];
     } else {
       return _presetItems[1];
@@ -70,7 +72,10 @@ class CategoriesProvider with ChangeNotifier {
 
   Future<void> fetchCategories() async {
     try {
-      final uri = Uri.parse(_categoriesFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories.json?auth=$token&orderBy=\"uid\"&equalTo=\"$uid\"");
       final response = await http.get(uri);
       List<Category> fetchedCategoriesList = [];
       var decodedBody = json.decode(response.body);
@@ -79,21 +84,24 @@ class CategoriesProvider with ChangeNotifier {
         extractedData.forEach((categoryId, categoryData) {
           fetchedCategoriesList.add(Category(
             id: categoryId,
-            uid: categoryData["uid"],
             name: categoryData["name"],
             isEditable: categoryData["isEditable"],
             priorityOrder: categoryData["priorityOrder"],
           ));
         });
 
-        _items = fetchedCategoriesList;
+        if (fetchedCategoriesList.isNotEmpty) {
+          _items = fetchedCategoriesList;
+        } else {
+          await _addPresetCategories();
+        }
         notifyListeners();
       } else {
         await _addPresetCategories();
         notifyListeners();
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -101,7 +109,9 @@ class CategoriesProvider with ChangeNotifier {
   Future<void> addCategory(Category category) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      final uri = Uri.parse(_categoriesFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories.json?auth=$token");
       final response = await http.post(
         uri,
         body: json.encode({
@@ -116,19 +126,19 @@ class CategoriesProvider with ChangeNotifier {
       _items.add(Category.fromCategory(
         origin: category,
         id: categoryId,
-        uid: uid,
       ));
       _updatePriorityOrders();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
 
   Future<void> removeCategory(String id) async {
     try {
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
       var uri = Uri.parse(
-          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories/$id.json");
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories/$id.json?auth=$token");
       var response = await http.delete(uri);
       if (response.statusCode >= 400) {
         throw "Cannot delete category. Please try again later.";
@@ -137,8 +147,8 @@ class CategoriesProvider with ChangeNotifier {
       final indexToRemove = _items.indexWhere((element) => element.id == id);
       _items.removeAt(indexToRemove);
       _updatePriorityOrders();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -152,8 +162,9 @@ class CategoriesProvider with ChangeNotifier {
       var index =
           _items.indexWhere((category) => category.id == updatedCategory.id);
       if (index >= 0) {
+        final token = await FirebaseAuth.instance.currentUser?.getIdToken();
         var uri = Uri.parse(
-            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories/${updatedCategory.id}.json");
+            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories/${updatedCategory.id}.json?auth=$token");
         var response = await http.patch(uri,
             body: json.encode({
               "name": updatedCategory.name,
@@ -169,8 +180,8 @@ class CategoriesProvider with ChangeNotifier {
       } else {
         throw "Trying to edit unexisting category";
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -179,6 +190,7 @@ class CategoriesProvider with ChangeNotifier {
     Map<String, Map<String, dynamic>> patchMap = {};
 
     var newItems = itemsToUpdate ?? itemsSorted;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
     for (int index = 0; index < newItems.length; index++) {
       var updatedCategory = Category.fromCategory(
         origin: newItems[index],
@@ -187,13 +199,15 @@ class CategoriesProvider with ChangeNotifier {
       newItems[index] = updatedCategory;
       patchMap[updatedCategory.id] = {
         "id": updatedCategory.id,
-        "uid": updatedCategory.uid,
+        "uid": uid,
         "name": updatedCategory.name,
         "isEditable": updatedCategory.isEditable,
         "priorityOrder": updatedCategory.priorityOrder,
       };
     }
-    var uri = Uri.parse(_categoriesFbUrl);
+    final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+    var uri = Uri.parse(
+        "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/categories.json?auth=$token");
     var response = await http.patch(uri, body: json.encode(patchMap));
     if (response.statusCode >= 400) {
       throw "Something went wrong on server side. Please try again later.";
@@ -210,8 +224,8 @@ class CategoriesProvider with ChangeNotifier {
       final Category item = newItems.removeAt(oldIndex);
       newItems.insert(newIndex, item);
       await _updatePriorityOrders(itemsToUpdate: newItems);
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       _items = oldItems;
       notifyListeners();
       rethrow;

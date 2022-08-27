@@ -84,6 +84,7 @@ class _CalendarViewState extends State<CalendarView> {
         CalendarGoalItem(
           goalId: goal.id,
           onTap: _onGoalItemTap,
+          onLongPress: _onGoalItemLongPress,
           isShortMode: widget.isShortMode,
           isSelected: _goalsSelectionMap[goal.id] ?? false,
         ),
@@ -91,6 +92,13 @@ class _CalendarViewState extends State<CalendarView> {
     }
     result.add(Spacer());
     return result;
+  }
+
+  void _onGoalItemLongPress(String goalId) {
+    var isGoalSelected = _goalsSelectionMap[goalId] ?? false;
+    if(isGoalSelected){
+      _onGoalItemTap(goalId);
+    }
   }
 
   void _onGoalItemTap(String goalId) {

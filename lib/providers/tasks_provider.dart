@@ -8,16 +8,21 @@ import 'package:http/http.dart' as http;
 import 'package:dosprav/models/task.dart';
 
 class TasksProvider with ChangeNotifier {
-  static const String _tasksFbUrl =
-      "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/tasks.json";
-
   List<Task> _items = [];
 
   List<Task> get items => [..._items];
 
+  void clear() {
+    _items = [];
+    notifyListeners();
+  }
+
   Future<void> fetchTasks() async {
     try {
-      final uri = Uri.parse(_tasksFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/tasks.json?auth=$token&orderBy=\"uid\"&equalTo=\"$uid\"");
       final response = await http.get(uri);
       List<Task> fetchedTasksList = [];
       var decodedBody = json.decode(response.body);
@@ -26,7 +31,6 @@ class TasksProvider with ChangeNotifier {
         extractedData.forEach((taskId, taskData) {
           fetchedTasksList.add(Task(
             id: taskId,
-            uid: taskData["uid"],
             name: taskData["name"],
             description: taskData["description"],
             timestampCreated: DateTime.parse(taskData["timestampCreated"]),
@@ -40,8 +44,8 @@ class TasksProvider with ChangeNotifier {
         _items = fetchedTasksList;
         notifyListeners();
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -49,7 +53,9 @@ class TasksProvider with ChangeNotifier {
   Future<void> addTask(Task task) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      final uri = Uri.parse(_tasksFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/tasks.json?auth=$token");
       final response = await http.post(
         uri,
         body: json.encode({
@@ -66,18 +72,22 @@ class TasksProvider with ChangeNotifier {
       );
       final taskId = json.decode(response.body)["name"];
 
-      _items.add(Task.fromTask(origin: task, id: taskId, uid: uid));
+      _items.add(Task.fromTask(
+        origin: task,
+        id: taskId,
+      ));
       notifyListeners();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
 
   Future<void> removeTask(String id) async {
     try {
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
       var uri = Uri.parse(
-          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/tasks/$id.json");
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/tasks/$id.json?auth=$token");
       var response = await http.delete(uri);
       if (response.statusCode >= 400) {
         throw "Cannot delete task. Please try again later.";
@@ -86,8 +96,8 @@ class TasksProvider with ChangeNotifier {
       final indexToRemove = _items.indexWhere((task) => task.id == id);
       _items.removeAt(indexToRemove);
       notifyListeners();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -100,8 +110,9 @@ class TasksProvider with ChangeNotifier {
     try {
       var index = _items.indexWhere((task) => task.id == updatedTask.id);
       if (index >= 0) {
+        final token = await FirebaseAuth.instance.currentUser?.getIdToken();
         var uri = Uri.parse(
-            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/tasks/${updatedTask.id}.json");
+            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/tasks/${updatedTask.id}.json?auth=$token");
         var response = await http.patch(uri,
             body: json.encode({
               "name": updatedTask.name,
@@ -125,8 +136,8 @@ class TasksProvider with ChangeNotifier {
       } else {
         throw "Trying to edit unexisting task";
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -173,8 +184,8 @@ class TasksProvider with ChangeNotifier {
         }
       }
       notifyListeners();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }

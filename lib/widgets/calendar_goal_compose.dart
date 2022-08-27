@@ -98,7 +98,7 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
       setState(() {
         _isSaving = false;
       });
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     }
   }
 

@@ -15,6 +15,7 @@ class CalendarGoalItem extends StatelessWidget {
     Key? key,
     required this.goalId,
     required this.onTap,
+    required this.onLongPress,
     this.isShortMode = false,
     this.isSelected = false,
   }) : super(key: key);
@@ -23,6 +24,7 @@ class CalendarGoalItem extends StatelessWidget {
   final bool isShortMode;
   final bool isSelected;
   final void Function(String goalId) onTap;
+  final void Function(String goalId) onLongPress;
 
 
   Color _calculateColor(BuildContext context, CalendarGoal goal) {
@@ -77,6 +79,7 @@ class CalendarGoalItem extends StatelessWidget {
       color: isSelected ? Theme.of(context).colorScheme.secondary.withGreen(200) : Theme.of(context).colorScheme.secondary,
       child: GestureDetector(
         onLongPress: () {
+          onLongPress(goalId);
           showDialog(
             context: context,
             builder: (ctx) {
@@ -84,7 +87,10 @@ class CalendarGoalItem extends StatelessWidget {
                 goalId: goalId,
               );
             },
-          );
+          ).then((isDeleted) {
+            if(isDeleted != null && isDeleted == true){
+            }
+          });
         },
         onTap: () {
           onTap(goalId);

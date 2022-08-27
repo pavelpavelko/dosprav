@@ -12,18 +12,23 @@ class CalendarGoalsProvider with ChangeNotifier {
   static const maxGoalsNumber = 4;
   static const goalAssessmentDuration = Duration(days: 7);
 
-  static const String _calendarGoalsFbUrl =
-      "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goals.json";
-
   List<CalendarGoal> _items = [];
 
   List<CalendarGoal> get items {
     return [..._items];
   }
 
+  void clear() {
+    _items = [];
+    notifyListeners();
+  }
+
   Future<void> fetchCalendarGoals() async {
     try {
-      final uri = Uri.parse(_calendarGoalsFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goals.json?auth=$token&orderBy=\"uid\"&equalTo=\"$uid\"");
       final response = await http.get(uri);
       List<CalendarGoal> fetchedCalendarGoalsList = [];
       var decodedBody = json.decode(response.body);
@@ -32,7 +37,6 @@ class CalendarGoalsProvider with ChangeNotifier {
         extractedData.forEach((calendarGoalId, calendarGoalData) {
           fetchedCalendarGoalsList.add(CalendarGoal(
             id: calendarGoalId,
-            uid: calendarGoalData["uid"],
             name: calendarGoalData["name"],
             desireTaskName: calendarGoalData["desireTaskName"],
             rule: CalendarGoalRule(
@@ -45,9 +49,9 @@ class CalendarGoalsProvider with ChangeNotifier {
 
         _items = fetchedCalendarGoalsList;
         notifyListeners();
-      } 
-    } catch (error) {
-      print(error);
+      }
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -55,7 +59,9 @@ class CalendarGoalsProvider with ChangeNotifier {
   Future<void> addGoal(CalendarGoal newGoal) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      final uri = Uri.parse(_calendarGoalsFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goals.json?auth=$token");
       final response = await http.post(
         uri,
         body: json.encode({
@@ -72,12 +78,11 @@ class CalendarGoalsProvider with ChangeNotifier {
         CalendarGoal.fromGoal(
           origin: newGoal,
           id: calendarGoalId,
-          uid: uid,
         ),
       );
       notifyListeners();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -90,8 +95,9 @@ class CalendarGoalsProvider with ChangeNotifier {
     try {
       var index = _items.indexWhere((goal) => goal.id == goalToUpdate.id);
       if (index >= 0) {
+        final token = await FirebaseAuth.instance.currentUser?.getIdToken();
         var uri = Uri.parse(
-            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goals/${goalToUpdate.id}.json");
+            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goals/${goalToUpdate.id}.json?auth=$token");
         var response = await http.patch(uri,
             body: json.encode({
               "name": goalToUpdate.name,
@@ -110,16 +116,17 @@ class CalendarGoalsProvider with ChangeNotifier {
       } else {
         throw "Trying to edit unexisting calendar goal.";
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
 
   Future<void> removeGoal(String goalId) async {
     try {
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
       var uri = Uri.parse(
-          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goals/$goalId.json");
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goals/$goalId.json?auth=$token");
       var response = await http.delete(uri);
       if (response.statusCode >= 400) {
         throw "Cannot delete calendar goal. Please try again later.";
@@ -129,8 +136,8 @@ class CalendarGoalsProvider with ChangeNotifier {
           _items.indexWhere((element) => element.id == goalId);
       _items.removeAt(indexToRemove);
       notifyListeners();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }

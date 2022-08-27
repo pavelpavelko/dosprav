@@ -11,16 +11,21 @@ import 'package:dosprav/helpers/task_helper.dart';
 class CalendarGoalTracksProvider with ChangeNotifier {
   List<CalendarGoalTrack> _items = [];
 
-  static const String _calendarGoalTracksFbUrl =
-      "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goal_tracks.json";
-
   List<CalendarGoalTrack> get items {
     return [..._items];
   }
 
+  void clear() {
+    _items = [];
+    notifyListeners();
+  }
+
   Future<void> fetchCalendarGoalTracks() async {
     try {
-      final uri = Uri.parse(_calendarGoalTracksFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goal_tracks.json?auth=$token&orderBy=\"uid\"&equalTo=\"$uid\"");
       final response = await http.get(uri);
       List<CalendarGoalTrack> fetchedCalendarGoalTracksList = [];
       var decodedBody = json.decode(response.body);
@@ -29,16 +34,16 @@ class CalendarGoalTracksProvider with ChangeNotifier {
         extractedData.forEach((calendarGoalTrackId, calendarGoalTrackData) {
           fetchedCalendarGoalTracksList.add(CalendarGoalTrack(
             id: calendarGoalTrackId,
-            uid: calendarGoalTrackData["uid"],
             date: DateTime.parse(calendarGoalTrackData["date"]),
-            trackStateMap: Map<String, int>.from(json.decode(calendarGoalTrackData["trackStateMap"])),
+            trackStateMap: Map<String, int>.from(
+                json.decode(calendarGoalTrackData["trackStateMap"])),
           ));
         });
         _items = fetchedCalendarGoalTracksList;
         notifyListeners();
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -46,7 +51,9 @@ class CalendarGoalTracksProvider with ChangeNotifier {
   Future<void> addGoalTrack(CalendarGoalTrack newTrack) async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      final uri = Uri.parse(_calendarGoalTracksFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goal_tracks.json?auth=$token");
       final response = await http.post(
         uri,
         body: json.encode({
@@ -60,12 +67,11 @@ class CalendarGoalTracksProvider with ChangeNotifier {
         CalendarGoalTrack.fromTrack(
           origin: newTrack,
           id: calendarGoalTrackId,
-          uid: uid,
         ),
       );
       notifyListeners();
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -75,8 +81,9 @@ class CalendarGoalTracksProvider with ChangeNotifier {
       var index =
           _items.indexWhere((goalsTrack) => goalsTrack.id == trackToUpdate.id);
       if (index >= 0) {
+        final token = await FirebaseAuth.instance.currentUser?.getIdToken();
         var uri = Uri.parse(
-            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goal_tracks/${trackToUpdate.id}.json");
+            "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/calendar_goal_tracks/${trackToUpdate.id}.json?auth=$token");
         var response = await http.patch(uri,
             body: json.encode({
               "trackStateMap": json.encode(trackToUpdate.trackStateMap),
@@ -91,8 +98,8 @@ class CalendarGoalTracksProvider with ChangeNotifier {
       } else {
         throw "Trying to edit unexisting calendar goal track.";
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }

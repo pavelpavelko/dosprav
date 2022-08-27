@@ -49,9 +49,8 @@ class ViewModelsProvider with ChangeNotifier {
   Future<void> fetchViewModelStatuses() async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      var viewModelStatusesFbUrl =
-          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid.json";
-      final uri = Uri.parse(viewModelStatusesFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uri = Uri.parse("https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid.json?auth=$token");
       final response = await http.get(uri);
 
       var decodedBody = json.decode(response.body);
@@ -70,8 +69,8 @@ class ViewModelsProvider with ChangeNotifier {
         _items = updatedItems;
         notifyListeners();
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       rethrow;
     }
   }
@@ -87,9 +86,8 @@ class ViewModelsProvider with ChangeNotifier {
       notifyListeners();
 
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      var viewModelStatusesFbUrl =
-          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid/$viewModelId.json";
-      final uri = Uri.parse(viewModelStatusesFbUrl);
+      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final uri = Uri.parse("https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid/$viewModelId.json?auth=$token");
       final response = await http.put(
         uri,
         body: json.encode(activeStatus),
@@ -97,8 +95,8 @@ class ViewModelsProvider with ChangeNotifier {
       if (response.statusCode >= 400) {
         throw "Server-side error. Error code: ${response.statusCode}";
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
       _items[index] = oldViewModel;
       notifyListeners();
       rethrow;
