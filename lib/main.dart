@@ -18,6 +18,7 @@ import 'package:dosprav/providers/home_slots_provider.dart';
 import 'package:dosprav/screens/calendar_view_screen.dart';
 import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
+import 'package:dosprav/screens/account_screen.dart';
 
 
 void main() async {
@@ -82,6 +83,7 @@ class MyApp extends StatelessWidget {
           DailyViewScreen.routeName: (context) => DailyViewScreen(),
           CategoriesTableViewScreen.routeName:(context) => CategoriesTableViewScreen(),
           CalendarViewScreen.routeName:(context) => CalendarViewScreen(),
+          AccountScreen.routeName:(context) => AccountScreen(),
         },
       ),
     );

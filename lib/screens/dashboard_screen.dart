@@ -1,8 +1,7 @@
-import 'package:dosprav/models/calendar_goal_track.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/home_slots.dart';
@@ -12,6 +11,7 @@ import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/providers/home_slots_provider.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
+import 'package:dosprav/screens/account_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -59,7 +59,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           IconButton(
             padding: EdgeInsets.only(right: 15),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(AccountScreen.routeName);
+            },
             icon: Icon(
               Icons.person,
             ),

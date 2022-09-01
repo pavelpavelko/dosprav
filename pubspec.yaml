@@ -43,6 +43,9 @@ dependencies:
   focused_menu: ^1.0.5
   toggle_switch: ^2.0.1
   http: ^0.13.5
+  image_picker: ^0.8.5+3
+  firebase_storage: ^10.3.7
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

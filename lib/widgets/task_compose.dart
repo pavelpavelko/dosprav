@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:dosprav/models/task.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
@@ -8,6 +9,7 @@ import 'package:dosprav/helpers/task_helper.dart';
 import 'package:dosprav/widgets/picker_dialog.dart';
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/models/category.dart';
+import 'package:dosprav/screens/account_screen.dart';
 
 class TaskCompose extends StatefulWidget {
   const TaskCompose({Key? key, this.taskId, this.updateTaskChanged})
@@ -46,8 +48,7 @@ class TaskComposeState extends State<TaskCompose> {
     var categoriesProvider =
         Provider.of<CategoriesProvider>(context, listen: false);
 
-    String categoryId = categoriesProvider.itemsSorted.first.id;
-
+    String categoryId;
     if (widget.taskId != null) {
       _taskToEdit = _tasksProvider!.getTaskById(widget.taskId!);
       _dueDate = _taskToEdit!.dueDate;
@@ -55,6 +56,17 @@ class TaskComposeState extends State<TaskCompose> {
       _taskNameController.text = _taskToEdit!.name;
       _taskDescriptionController.text = _taskToEdit!.description;
       categoryId = _taskToEdit!.categoryId;
+    } else {
+      categoryId = categoriesProvider.itemsSorted.first.id;
+      SharedPreferences.getInstance().then((prefs) {
+        final isDailyListAsDefault =
+            prefs.getBool(AccountScreen.dailyListAsDefaultKey) ?? false;
+        if (isDailyListAsDefault) {
+          setState(() {
+            _category = categoriesProvider.dailyListCategory;
+          });
+        }
+      });
     }
 
     _category = categoriesProvider.getById(categoryId);
