@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../widgets/auth_form.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -101,7 +102,7 @@ class AuthScreenState extends State<AuthScreen> {
               height: 30,
             ),
             Text(
-              "DO.SPRAV",
+              AppLocalizations.of(context)!.appNameUppercase,
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,

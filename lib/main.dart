@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
@@ -20,6 +23,7 @@ import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
 import 'package:dosprav/screens/account_screen.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +66,17 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'do.sprav',
+        title: "do.sprav",
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('uk', ''),
+        ],
         theme: ThemeData(
           colorScheme: colorScheme,
           useMaterial3: true,
@@ -81,9 +95,10 @@ class MyApp extends StatelessWidget {
           TaskDetailScreen.routeName: (context) => TaskDetailScreen(),
           TaskComposeScreen.routeName: (context) => TaskComposeScreen(),
           DailyViewScreen.routeName: (context) => DailyViewScreen(),
-          CategoriesTableViewScreen.routeName:(context) => CategoriesTableViewScreen(),
-          CalendarViewScreen.routeName:(context) => CalendarViewScreen(),
-          AccountScreen.routeName:(context) => AccountScreen(),
+          CategoriesTableViewScreen.routeName: (context) =>
+              CategoriesTableViewScreen(),
+          CalendarViewScreen.routeName: (context) => CalendarViewScreen(),
+          AccountScreen.routeName: (context) => AccountScreen(),
         },
       ),
     );
