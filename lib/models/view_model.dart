@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ViewModel {
   final String id;
   final String name;
-  final String imageUrl;
+  final String imageAssetPath;
   final bool isActivated;
   final Widget Function() createViewPreview;
   final String viewScreenRouteName;
@@ -12,7 +12,7 @@ class ViewModel {
   ViewModel({
     required this.id,
     required this.name,
-    required this.imageUrl,
+    required this.imageAssetPath,
     this.isActivated = false,
     required this.createViewPreview,
     required this.viewScreenRouteName,
@@ -22,11 +22,11 @@ class ViewModel {
     required ViewModel origin,
     String? id,
     String? name,
-    String? imageUrl,
+    String? imageAssetPath,
     bool? isActivated,
   })  : id = id ?? origin.id,
         name = name ?? origin.name,
-        imageUrl = imageUrl ?? origin.imageUrl,
+        imageAssetPath = imageAssetPath ?? origin.imageAssetPath,
         createViewPreview = origin.createViewPreview,
         viewScreenRouteName = origin.viewScreenRouteName,
         isActivated = isActivated ?? origin.isActivated;

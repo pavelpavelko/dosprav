@@ -63,7 +63,7 @@ class CategoriesTableViewScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          "Cannot postpone Categories Table view. Please try again later.",
+                          "Cannot deactivate Categories Table view. Please try again later.",
                           textAlign: TextAlign.center,
                         ),
                         backgroundColor: Theme.of(context).errorColor,
@@ -97,15 +97,15 @@ class CategoriesTableViewScreen extends StatelessWidget {
             itemBuilder: (context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: "PushTable",
-                child: Text("Push on Top"),
+                child: Text("Push View on Home"),
               ),
               PopupMenuItem<String>(
                 value: "Create",
-                child: Text("Create"),
+                child: Text("Create Category"),
               ),
               PopupMenuItem<String>(
                 value: "Postpone",
-                child: Text("Postpone"),
+                child: Text("Deactivate View"),
               ),
             ],
           ),

@@ -14,7 +14,7 @@ class HomeSlotsProvider with ChangeNotifier {
   final int _maxSlots = 2;
 
   List<HomeSlot> _items = [
-    HomeSlot(slotType: SlotType.calendarView),
+//    HomeSlot(slotType: SlotType.calendarView),
 //    HomeSlot(slotType: SlotType.dailyList),
   ];
 

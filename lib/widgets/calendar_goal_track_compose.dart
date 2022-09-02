@@ -199,7 +199,7 @@ class _CalendarGoalTrackComposeState extends State<CalendarGoalTrackCompose> {
           ),
           Flexible(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: _createGoalsRows(),

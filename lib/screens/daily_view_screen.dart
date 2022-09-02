@@ -43,7 +43,7 @@ class DailyViewScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          "Cannot postpone Daily List view. Please try again later.",
+                          "Cannot deactivate Daily List view. Please try again later.",
                           textAlign: TextAlign.center,
                         ),
                         backgroundColor: Theme.of(context).errorColor,
@@ -70,11 +70,11 @@ class DailyViewScreen extends StatelessWidget {
             itemBuilder: (context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: "Push",
-                child: Text("Push on Top"),
+                child: Text("Push View on Home"),
               ),
               PopupMenuItem<String>(
                 value: "Postpone",
-                child: Text("Postpone"),
+                child: Text("Deactivate View"),
               ),
             ],
           ),

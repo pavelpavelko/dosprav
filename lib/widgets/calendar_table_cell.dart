@@ -201,7 +201,10 @@ class CalendarTableCell extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if (TaskHelper.compareDatesByDays(cellDate, DateTime.now()) <= 0) {
+        if (TaskHelper.compareDatesByDays(cellDate, DateTime.now()) <= 0 &&
+            Provider.of<CalendarGoalsProvider>(context, listen: false)
+                .items
+                .isNotEmpty) {
           showDialog(
               context: context,
               builder: (ctx) {

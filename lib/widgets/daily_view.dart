@@ -218,28 +218,39 @@ class _DailyViewState extends State<DailyView> {
           _isLoading
               ? Expanded(child: Center(child: CircularProgressIndicator()))
               : Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: ListTile.divideTiles(
-                      color: Theme.of(context).colorScheme.primary,
-                      tiles: items
-                          .where(
-                              (task) => !task.isComplete || _isCompletedVisible)
-                          .where((task) {
-                        var durationDiff = _isNextWeekVisible
-                            ? Duration(days: 6)
-                            : Duration(days: 0);
-                        return TaskHelper.compareDatesByDays(task.dueDate,
-                                DateTime.now().add(durationDiff)) <=
-                            0;
-                      }).map(
-                        (task) => DailyViewListItem(
-                          task: task,
-                          isShortMode: widget.isShortMode,
+                  child: items.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(30),
+                            child: Text(
+                              "There are no active tasks for today.\nPlease use the bottom sheet to create a new one.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 23),
+                            ),
+                          ),
+                        )
+                      : ListView(
+                          padding: EdgeInsets.zero,
+                          children: ListTile.divideTiles(
+                            color: Theme.of(context).colorScheme.primary,
+                            tiles: items
+                                .where((task) =>
+                                    !task.isComplete || _isCompletedVisible)
+                                .where((task) {
+                              var durationDiff = _isNextWeekVisible
+                                  ? Duration(days: 6)
+                                  : Duration(days: 0);
+                              return TaskHelper.compareDatesByDays(task.dueDate,
+                                      DateTime.now().add(durationDiff)) <=
+                                  0;
+                            }).map(
+                              (task) => DailyViewListItem(
+                                task: task,
+                                isShortMode: widget.isShortMode,
+                              ),
+                            ),
+                          ).toList(),
                         ),
-                      ),
-                    ).toList(),
-                  ),
                 ),
         ],
       ),

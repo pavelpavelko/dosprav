@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:dosprav/widgets/calendar_view.dart';
 import 'package:dosprav/widgets/view_preview.dart';
 
 class CalendarViewPreview extends StatelessWidget {
@@ -77,8 +76,7 @@ class CalendarViewPreview extends StatelessWidget {
 
     return ViewPreview(
       previewPages: pages,
-      backgroundView: CalendarView(
-      ),
+      backgroundView: Container(),
     );
   }
 }

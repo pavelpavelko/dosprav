@@ -119,60 +119,57 @@ class _CategoryComposeState extends State<CategoryCompose> {
               ),
             ),
           ),
-          _isSaving
-              ? Padding(
-                  padding: EdgeInsets.only(top: 25, bottom: 25),
-                  child: CircularProgressIndicator(),
-                )
-              : Padding(
-                  padding:
-                      EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
-                  child: TextField(
-                    textInputAction: TextInputAction.done,
-                    keyboardType: TextInputType.name,
-                    controller: _categoryNameController,
-                    onChanged: (value) {
-                      setState(() {
-                        _categoryName = value;
-                      });
-                    },
-                    onSubmitted: (value) => _trySaveCategory(),
-                    decoration: InputDecoration(
-                      labelText: "Category Name",
-                      errorText: _isErrorTextVisible
-                          ? "Category name must not be empty"
-                          : null,
-                    ),
-                  ),
-                ),
-          if (!_isSaving)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                color: Theme.of(context).colorScheme.primary,
+          Padding(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
+            child: TextField(
+              textInputAction: TextInputAction.done,
+              keyboardType: TextInputType.name,
+              controller: _categoryNameController,
+              onChanged: (value) {
+                setState(() {
+                  _categoryName = value;
+                });
+              },
+              onSubmitted: (value) => _trySaveCategory(),
+              decoration: InputDecoration(
+                labelText: "Category Name",
+                errorText: _isErrorTextVisible
+                    ? "Category name must not be empty"
+                    : null,
               ),
             ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                style: ButtonStyle(),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("CANCEL"),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: TextButton(
-                  onPressed: () {
-                    _trySaveCategory();
-                  },
-                  child: Text("SAVE"),
-                ),
-              ),
-            ],
-          )
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Divider(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          _isSaving
+              ? Padding(
+                  padding: EdgeInsets.all(6),
+                  child: Center(child: CircularProgressIndicator()))
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      style: ButtonStyle(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("CANCEL"),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: TextButton(
+                        onPressed: () {
+                          _trySaveCategory();
+                        },
+                        child: Text("SAVE"),
+                      ),
+                    ),
+                  ],
+                )
         ],
       ),
     );

@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:dosprav/widgets/create_task_sheet.dart';
 import 'package:dosprav/widgets/home_slots.dart';
 import 'package:dosprav/widgets/views_gallery.dart';
-import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
-import 'package:dosprav/providers/calendar_goals_provider.dart';
-import 'package:dosprav/providers/categories_provider.dart';
-import 'package:dosprav/providers/home_slots_provider.dart';
-import 'package:dosprav/providers/tasks_provider.dart';
 import 'package:dosprav/screens/account_screen.dart';
+import 'package:dosprav/widgets/integrations_gallery.dart';
+import 'package:dosprav/providers/home_slots_provider.dart';
+import 'package:dosprav/providers/categories_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -23,28 +20,35 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedTabIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+
+    Provider.of<CategoriesProvider>(context, listen: false)
+        .fetchCategories()
+        .then((_) {
+      if (mounted) {
+        Provider.of<HomeSlotsProvider>(context, listen: false).fetchHomeSlots();
+      }
+    });
+  }
+
   void _onTabTapped(int index) {
     setState(() {
       _selectedTabIndex = index;
     });
   }
 
-  void _logout(BuildContext context) {
-    Provider.of<CategoriesProvider>(context, listen: false).clear();
-    Provider.of<TasksProvider>(context, listen: false).clear();
-    Provider.of<CalendarGoalsProvider>(context, listen: false).clear();
-    Provider.of<CalendarGoalTracksProvider>(context, listen: false).clear();
-    Provider.of<HomeSlotsProvider>(context, listen: false).clear();
+  String _appBarTitleText(bool isHomeEmpty) {
+    if (isHomeEmpty) {
+      return _selectedTabIndex == 0 ? "Views" : "Integrations";
+    }
 
-    FirebaseAuth.instance.signOut();
-  }
-
-  String _appBarTitleText() {
     switch (_selectedTabIndex) {
       case 1:
-        return "All";
+        return "Views";
       case 2:
-        return "Settings";
+        return "Integrations";
       case 0:
       default:
         return "Home";
@@ -53,9 +57,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var isHomeSlotsEmpty =
+        Provider.of<HomeSlotsProvider>(context, listen: true).items.isEmpty;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(_appBarTitleText()),
+        title: Text(_appBarTitleText(isHomeSlotsEmpty)),
         actions: [
           IconButton(
             padding: EdgeInsets.only(right: 15),
@@ -78,14 +85,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: IndexedStack(
             index: _selectedTabIndex,
             children: [
-              HomeSlots(),
+              if (!isHomeSlotsEmpty) HomeSlots(),
               ViewsGallery(),
-              Center(
-                child: ElevatedButton(
-                  onPressed: (() => _logout(context)),
-                  child: Text("LOGOUT"),
-                ),
-              ),
+              IntegrationsGallery(),
             ],
           ),
         ),
@@ -99,18 +101,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
         selectedItemColor: Theme.of(context).colorScheme.primary,
         showUnselectedLabels: false,
         onTap: _onTabTapped,
-        items: const [
+        items: [
+          if (!isHomeSlotsEmpty)
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Home",
+            ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
+            icon: Icon(Icons.grid_view_rounded),
+            label: "Views",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: "All",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "Settings",
+            icon: Icon(Icons.settings_suggest_outlined),
+            label: "Integrations",
           ),
         ],
       ),

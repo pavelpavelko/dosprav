@@ -55,17 +55,18 @@ class _CalendarViewState extends State<CalendarView> {
         await Provider.of<CalendarGoalTracksProvider>(context, listen: false)
             .fetchCalendarGoalTracks();
       }
-      
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Cannot download calendar goals. Please try again later.",
-            textAlign: TextAlign.center,
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Cannot download calendar goals. Please try again later.",
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Theme.of(context).errorColor,
           ),
-          backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
+        );
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -96,7 +97,7 @@ class _CalendarViewState extends State<CalendarView> {
 
   void _onGoalItemLongPress(String goalId) {
     var isGoalSelected = _goalsSelectionMap[goalId] ?? false;
-    if(isGoalSelected){
+    if (isGoalSelected) {
       _onGoalItemTap(goalId);
     }
   }

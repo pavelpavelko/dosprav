@@ -14,6 +14,7 @@ import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/providers/home_slots_provider.dart';
 import 'package:dosprav/providers/tasks_provider.dart';
+import 'package:dosprav/providers/view_models_provider.dart';
 
 class AccountScreen extends StatefulWidget {
   static const String routeName = "/account";
@@ -103,6 +104,7 @@ class _AccountScreenState extends State<AccountScreen> {
     Provider.of<CalendarGoalsProvider>(context, listen: false).clear();
     Provider.of<CalendarGoalTracksProvider>(context, listen: false).clear();
     Provider.of<HomeSlotsProvider>(context, listen: false).clear();
+    Provider.of<ViewModelsProvider>(context, listen: false).clear();
 
     FirebaseAuth.instance.signOut();
 

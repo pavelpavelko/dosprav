@@ -14,33 +14,38 @@ import 'package:dosprav/screens/calendar_view_screen.dart';
 import 'package:dosprav/widgets/calendar_view_preview.dart';
 
 class ViewModelsProvider with ChangeNotifier {
-  List<ViewModel> _items = [
+  static final List<ViewModel> _initialItems = [
     ViewModel(
       id: "daily_list",
       name: "Daily List",
-      imageUrl:
-          "https://media.istockphoto.com/photos/notepad-open-with-white-blank-page-for-writing-idea-or-todo-list-a-picture-id867672394?k=20&m=867672394&s=612x612&w=0&h=tz9H4QDinsnwRrKMUv2fpBnLzrFS4aVbWUrmzmi1pCI=",
+      imageAssetPath: "assets/images/daily_list_gallery_view_bg.jpeg",
       createViewPreview: () => DailyViewPreview(),
       viewScreenRouteName: DailyViewScreen.routeName,
     ),
     ViewModel(
       id: "categories_table",
       name: "Categories\nTable",
-      imageUrl:
-          "https://i.pinimg.com/originals/1b/94/b5/1b94b5d0b0839b1a768050f8d4bcdfd0.jpg",
+      imageAssetPath: "assets/images/categories_table_gallery_view_bg.jpeg",
       createViewPreview: () => CategoriesTableViewPreview(),
       viewScreenRouteName: CategoriesTableViewScreen.routeName,
-      //isActivated: true,
     ),
     ViewModel(
       id: "calendar",
       name: "Calendar",
-      imageUrl:
-          "https://res.cloudinary.com/softwarepundit/image/upload/c_lfill,dpr_1.0,f_auto,h_1600,q_auto,w_1600/v1/software/calendar-icon",
+      imageAssetPath: "assets/images/calendar_gallery_view_bg.jpg",
       createViewPreview: () => CalendarViewPreview(),
       viewScreenRouteName: CalendarViewScreen.routeName,
     ),
   ];
+
+  List<ViewModel> _items;
+
+  ViewModelsProvider() : _items = [..._initialItems];
+
+  void clear() {
+    _items = [..._initialItems];
+    notifyListeners();
+  }
 
   List<ViewModel> get items {
     return [..._items];
@@ -50,7 +55,8 @@ class ViewModelsProvider with ChangeNotifier {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       final token = await FirebaseAuth.instance.currentUser?.getIdToken();
-      final uri = Uri.parse("https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid.json?auth=$token");
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid.json?auth=$token");
       final response = await http.get(uri);
 
       var decodedBody = json.decode(response.body);
@@ -87,7 +93,8 @@ class ViewModelsProvider with ChangeNotifier {
 
       final uid = FirebaseAuth.instance.currentUser?.uid;
       final token = await FirebaseAuth.instance.currentUser?.getIdToken();
-      final uri = Uri.parse("https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid/$viewModelId.json?auth=$token");
+      final uri = Uri.parse(
+          "https://do-sprav-flutter-app-default-rtdb.firebaseio.com/viewModelStatuses/$uid/$viewModelId.json?auth=$token");
       final response = await http.put(
         uri,
         body: json.encode(activeStatus),

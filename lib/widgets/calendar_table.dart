@@ -17,10 +17,10 @@ class CalendarTable extends StatelessWidget {
   final Map<String, bool> goalsSelectionMap;
   final bool isShortMode;
 
-  static const int _numWeeks = 3;
-
   List<TableRow> _createTableRows(DateTime startDate) {
     List<TableRow> result = [];
+
+    final int numWeeks = isShortMode ? 3 : 5;
 
     if (showWeekDaysHeader && !isShortMode) {
       List<Widget> row = [];
@@ -43,7 +43,7 @@ class CalendarTable extends StatelessWidget {
       result.add(TableRow(children: row));
     }
 
-    for (int weekIndex = 0; weekIndex < _numWeeks; weekIndex++) {
+    for (int weekIndex = 0; weekIndex < numWeeks; weekIndex++) {
       List<Widget> row = [];
       for (int weekDayIndex = 0; weekDayIndex < 7; weekDayIndex++) {
         var daysFromStartDate = (7 * weekIndex) + weekDayIndex;
@@ -70,7 +70,7 @@ class CalendarTable extends StatelessWidget {
     var durationToSubstract = Duration(
       days: CalendarGoalsProvider.goalAssessmentDuration.inDays +
           today.weekday -
-          1,
+          1 + (isShortMode ? 0 : 7),
     );
     var startDate = today.subtract(durationToSubstract);
     var tableRows = _createTableRows(startDate);

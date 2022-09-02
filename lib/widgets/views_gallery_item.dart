@@ -29,7 +29,7 @@ class ViewsGalleryItem extends StatelessWidget {
             image: DecorationImage(
               fit: BoxFit.cover,
               opacity: viewModel.isActivated ? 0.7 : 0.9,
-              image: NetworkImage(viewModel.imageUrl),
+              image: AssetImage(viewModel.imageAssetPath),
             ),
           ),
           child: GestureDetector(
@@ -80,8 +80,8 @@ class ViewsGalleryItem extends StatelessWidget {
               ),
               child: Stack(children: [
                 Positioned(
-                  top: 50,
-                  left: 5,
+                  top: 45,
+                  left: 10,
                   child: Transform.rotate(
                     angle: -pi / 4,
                     child: Text(
@@ -95,14 +95,28 @@ class ViewsGalleryItem extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  right: 25,
-                  bottom: 25,
-                  child: Icon(
-                    viewModel.isActivated ? Icons.check : Icons.cancel,
-                    size: 45,
-                    color: viewModel.isActivated
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.blueGrey,
+                  right: 10,
+                  bottom: 5,
+                  child: Column(
+                    children: [
+                      Icon(
+                        viewModel.isActivated ? Icons.check : Icons.cancel_outlined,
+                        size: 45,
+                        color: viewModel.isActivated
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.blueGrey,
+                      ),
+                      Text(
+                        viewModel.isActivated ? "Activated" : "Try it now!",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: viewModel.isActivated
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ]),
