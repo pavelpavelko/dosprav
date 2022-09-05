@@ -96,6 +96,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           );
                           tasksProvider.updateTask(updatedTask);
                           Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Postponing task for seven days.",
+                              ),
+                            ),
+                          );
                         },
                         child: Text("Postpone"),
                       ),

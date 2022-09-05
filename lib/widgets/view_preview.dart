@@ -7,7 +7,7 @@ class ViewPreview extends StatefulWidget {
     required this.backgroundView,
   }) : super(key: key);
 
-  final List<Widget> previewPages; 
+  final List<Widget> previewPages;
   final Widget backgroundView;
 
   @override
@@ -17,7 +17,7 @@ class ViewPreview extends StatefulWidget {
 class _ViewPreviewState extends State<ViewPreview> {
   double tutorialCurrentPage = 0;
   final PageController tutorialPageController = PageController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +32,28 @@ class _ViewPreviewState extends State<ViewPreview> {
   void dispose() {
     tutorialPageController.dispose();
     super.dispose();
+  }
+
+  Widget _createActivateButton() {
+    return Expanded(
+      child: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).colorScheme.secondary,
+          ),
+          child: Text(
+            "Activate",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSecondary,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -80,25 +102,7 @@ class _ViewPreviewState extends State<ViewPreview> {
               child: Row(
                 children: [
                   if (tutorialCurrentPage == 0)
-                    Expanded(
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(true);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Theme.of(context).colorScheme.secondary,
-                          ),
-                          child: Text(
-                            "Activate",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _createActivateButton(),
                   if (tutorialCurrentPage > 0)
                     Expanded(
                       child: Center(
@@ -137,7 +141,8 @@ class _ViewPreviewState extends State<ViewPreview> {
                         ),
                       ),
                     ),
-                  if (tutorialCurrentPage == widget.previewPages.length - 1) Spacer(),
+                  if (tutorialCurrentPage == widget.previewPages.length - 1)
+                    _createActivateButton(),
                 ],
               ),
             ),

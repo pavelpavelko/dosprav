@@ -89,7 +89,7 @@ class AuthFormState extends State<AuthForm> {
               },
               onSubmitted: (value) => _onForgotEmailSendPressed(),
               decoration: InputDecoration(
-                labelText: 'Email address',
+                labelText: "Email address",
                 errorText: !_isForgotEmailValid
                     ? "Please enter a valid email address."
                     : !_isForgotEmailRegistered
@@ -122,7 +122,6 @@ class AuthFormState extends State<AuthForm> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text("Forgot password?"),
           content: Text(
               "The password is sent to your email. Please check it out in a few minutes."),
           actions: [
@@ -131,7 +130,7 @@ class AuthFormState extends State<AuthForm> {
                 _textController.clear();
                 Navigator.of(context).pop();
               },
-              child: Text("Ok"),
+              child: Text("OK"),
             ),
           ],
         ),

@@ -97,20 +97,21 @@ class AuthScreenState extends State<AuthScreen> {
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             SizedBox(
-              height: 30,
+              height: 60,
             ),
             Text(
               AppLocalizations.of(context)!.appNameUppercase,
               style: TextStyle(
-                fontSize: 25,
+                fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.onSecondaryContainer,
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 20,
             ),
             Image(
               image: AssetImage("assets/images/target_arrow.png"),
@@ -118,7 +119,7 @@ class AuthScreenState extends State<AuthScreen> {
               width: double.infinity,
             ),
             SizedBox(
-              height: 15,
+              height: 25,
             ),
             AuthForm(
               isLoading: _isLoading,

@@ -51,26 +51,6 @@ class CategoriesTableHeaderItem extends StatelessWidget {
               ),
             ),
           ),
-          if (isEditMode && !category.isEditable)
-            Positioned(
-              right: 5,
-              top: 15,
-              child: CircleAvatar(
-                backgroundColor: Colors.grey,
-                radius: 15,
-                child: IconButton(
-                  constraints: BoxConstraints(),
-                  iconSize: 30,
-                  padding: EdgeInsets.zero,
-                  icon: Icon(
-                    Icons.do_not_touch_outlined,
-                    size: 16,
-                    color: Colors.white60,
-                  ),
-                  onPressed: null,
-                ),
-              ),
-            ),
           if (isEditMode)
             Positioned(
               left: 5,

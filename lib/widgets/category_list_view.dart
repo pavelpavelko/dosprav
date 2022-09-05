@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:dosprav/providers/categories_provider.dart';
 import 'package:dosprav/widgets/category_list.dart';
+import 'package:dosprav/providers/tasks_provider.dart';
 
 class CategoryListView extends StatefulWidget {
   const CategoryListView({
@@ -21,6 +22,45 @@ class CategoryListView extends StatefulWidget {
 
 class _CategoryListViewState extends State<CategoryListView> {
   bool _isCompletedVisible = false;
+
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategoriesAndTasks();
+  }
+
+  Future<void> _fetchCategoriesAndTasks() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<CategoriesProvider>(context, listen: false)
+          .fetchCategories();
+      if (mounted) {
+        await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
+      } else {
+        throw "Not mounted";
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot download tasks. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,17 +154,19 @@ class _CategoryListViewState extends State<CategoryListView> {
                 ],
               ),
             ),
-            Expanded(
-              child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: CategoryList(
-                    categoryId: widget.categoryId,
-                    isShortMode: widget.isShortMode,
-                    isHeaderVisible: false,
-                    isCompleteVisible: _isCompletedVisible,
-                    isCarouselMode: true,
-                  )),
-            ),
+            _isLoading
+                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                : Expanded(
+                    child: Padding(
+                        padding: EdgeInsets.all(5),
+                        child: CategoryList(
+                          categoryId: widget.categoryId,
+                          isShortMode: widget.isShortMode,
+                          isHeaderVisible: false,
+                          isCompleteVisible: _isCompletedVisible,
+                          isCarouselMode: true,
+                        )),
+                  ),
           ],
         ),
       ),

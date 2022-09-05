@@ -23,8 +23,6 @@ import 'package:dosprav/providers/calendar_goals_provider.dart';
 import 'package:dosprav/providers/calendar_goal_tracks_provider.dart';
 import 'package:dosprav/screens/account_screen.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

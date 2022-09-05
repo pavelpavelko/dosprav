@@ -75,21 +75,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.only(top: 0),
-        child: CreateTaskSheet(
-          sheetTopBarColor: Theme.of(context).colorScheme.primary,
-          actionButtonFrameColor: Theme.of(context).colorScheme.secondary,
-          actionButtonColor: Theme.of(context).colorScheme.primary,
-          actionButtonSize: 60,
-          child: IndexedStack(
-            index: _selectedTabIndex,
-            children: [
-              if (!isHomeSlotsEmpty) HomeSlots(),
-              ViewsGallery(),
-              IntegrationsGallery(),
-            ],
-          ),
+      body: CreateTaskSheet(
+        sheetTopBarColor: Theme.of(context).colorScheme.primary,
+        actionButtonFrameColor: Theme.of(context).colorScheme.secondary,
+        actionButtonColor: Theme.of(context).colorScheme.primary,
+        actionButtonSize: 60,
+        child: IndexedStack(
+          index: _selectedTabIndex,
+          children: [
+            if (!isHomeSlotsEmpty) HomeSlots(),
+            ViewsGallery(),
+            IntegrationsGallery(),
+          ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

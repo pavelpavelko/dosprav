@@ -65,6 +65,17 @@ class HomeSlotsProvider with ChangeNotifier {
     }
   }
 
+  Future<void> clearHome() async {
+    try {
+      _items = [];
+      await updateHomeSlots();
+      notifyListeners();
+    } catch (error, stackTrace) {
+      print("${error.toString()}\n${stackTrace.toString()}");
+      rethrow;
+    }
+  }
+
   Future<void> updateHomeSlots() async {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;

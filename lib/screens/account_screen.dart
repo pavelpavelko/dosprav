@@ -27,7 +27,6 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-
   String? _downloadedPhotoUrl;
   String? _userName;
   String? _userEmail;
@@ -49,7 +48,8 @@ class _AccountScreenState extends State<AccountScreen> {
       _downloadedPhotoUrl = FirebaseAuth.instance.currentUser?.photoURL;
       _userName = FirebaseAuth.instance.currentUser?.displayName;
       _userEmail = FirebaseAuth.instance.currentUser?.email;
-      _useDailyListAsDefault = _prefs?.getBool(AccountScreen.dailyListAsDefaultKey) ?? false;
+      _useDailyListAsDefault =
+          _prefs?.getBool(AccountScreen.dailyListAsDefaultKey) ?? false;
     });
   }
 
@@ -98,6 +98,38 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
+  Future<void> _clearHome() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<HomeSlotsProvider>(context, listen: false).clearHome();
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot clear Home. Please try again later.",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Now you can compose your Home from scratch.",
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   void _logout(BuildContext context) {
     Provider.of<CategoriesProvider>(context, listen: false).clear();
     Provider.of<TasksProvider>(context, listen: false).clear();
@@ -113,6 +145,8 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var isHomeNotEmpty =
+        Provider.of<HomeSlotsProvider>(context).items.isNotEmpty;
     return Scaffold(
       appBar: AppBar(
         title: Text("Account"),
@@ -202,11 +236,31 @@ class _AccountScreenState extends State<AccountScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () => _logout(context),
-                        child: Text("SIGN OUT"),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: SizedBox(
+                              width: 150,
+                              child: ElevatedButton(
+                                onPressed: isHomeNotEmpty ? _clearHome : null,
+                                child: Text("CLEAR HOME"),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: SizedBox(
+                              width: 150,
+                              child: ElevatedButton(
+                                onPressed: () => _logout(context),
+                                child: Text("SIGN OUT"),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: 20,
@@ -246,7 +300,8 @@ class _AccountScreenState extends State<AccountScreen> {
                           onChanged: (bool value) {
                             setState(() {
                               _useDailyListAsDefault = value;
-                              _prefs?.setBool(AccountScreen.dailyListAsDefaultKey, value);
+                              _prefs?.setBool(
+                                  AccountScreen.dailyListAsDefaultKey, value);
                             });
                           },
                         ),
