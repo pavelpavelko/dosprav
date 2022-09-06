@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
 
   @override
-  _AccountScreenState createState() => _AccountScreenState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }
 
 class _AccountScreenState extends State<AccountScreen> {
@@ -80,7 +81,7 @@ class _AccountScreenState extends State<AccountScreen> {
         });
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -104,6 +105,15 @@ class _AccountScreenState extends State<AccountScreen> {
         _isLoading = true;
       });
       await Provider.of<HomeSlotsProvider>(context, listen: false).clearHome();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Now you can compose your Home from scratch.",
+            ),
+          ),
+        );
+      }
     } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -119,13 +129,6 @@ class _AccountScreenState extends State<AccountScreen> {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Now you can compose your Home from scratch.",
-            ),
-          ),
-        );
       }
     }
   }

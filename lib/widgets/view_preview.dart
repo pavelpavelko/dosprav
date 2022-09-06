@@ -11,7 +11,7 @@ class ViewPreview extends StatefulWidget {
   final Widget backgroundView;
 
   @override
-  _ViewPreviewState createState() => _ViewPreviewState();
+  State<ViewPreview> createState() => _ViewPreviewState();
 }
 
 class _ViewPreviewState extends State<ViewPreview> {

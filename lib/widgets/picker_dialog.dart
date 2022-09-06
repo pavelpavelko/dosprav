@@ -18,7 +18,7 @@ class PickerDialog<T> extends StatefulWidget {
   final void Function(T) onConfirm;
 
   @override
-  _PickerDialogState createState() => _PickerDialogState<T>();
+  State<PickerDialog> createState() => _PickerDialogState<T>();
 }
 
 class _PickerDialogState<T> extends State<PickerDialog> {

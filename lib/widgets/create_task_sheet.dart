@@ -42,7 +42,7 @@ class CreateTaskSheet extends StatefulWidget {
   final EmergenceType emergenceType;
 
   @override
-  _CreateTaskSheetState createState() => _CreateTaskSheetState();
+  State<CreateTaskSheet> createState() => _CreateTaskSheetState();
 }
 
 enum EmergenceType {

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
+
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,7 +103,7 @@ class CategoriesProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -129,7 +131,7 @@ class CategoriesProvider with ChangeNotifier {
       ));
       _updatePriorityOrders();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -148,7 +150,7 @@ class CategoriesProvider with ChangeNotifier {
       _items.removeAt(indexToRemove);
       _updatePriorityOrders();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -181,7 +183,7 @@ class CategoriesProvider with ChangeNotifier {
         throw "Trying to edit unexisting category";
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -225,7 +227,7 @@ class CategoriesProvider with ChangeNotifier {
       newItems.insert(newIndex, item);
       await _updatePriorityOrders(itemsToUpdate: newItems);
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       _items = oldItems;
       notifyListeners();
       rethrow;

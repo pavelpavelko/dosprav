@@ -50,7 +50,6 @@ class DailyViewScreen extends StatelessWidget {
                       ),
                     );
                   });
-                  ;
                   Navigator.of(context).pop();
                   break;
                 case "Push":

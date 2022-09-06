@@ -23,7 +23,7 @@ class _ViewsGalleryState extends State<ViewsGallery> {
     try {
       await Provider.of<ViewModelsProvider>(context, listen: false)
           .fetchViewModelStatuses();
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

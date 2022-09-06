@@ -18,7 +18,7 @@ class CalendarGoalCompose extends StatefulWidget {
   final String? goalId;
 
   @override
-  _CalendarGoalComposeState createState() => _CalendarGoalComposeState();
+  State<CalendarGoalCompose> createState() => _CalendarGoalComposeState();
 }
 
 class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
@@ -84,7 +84,7 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
         _isSaving = true;
       });
       await _goalsProvider.removeGoal(_goalToEdit!.id);
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -95,10 +95,12 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
         ),
       );
     } finally {
-      setState(() {
-        _isSaving = false;
-      });
-      Navigator.of(context).pop(true);
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+        Navigator.of(context).pop(true);
+      }
     }
   }
 
@@ -147,7 +149,7 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
           );
         }
       }
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -158,10 +160,12 @@ class _CalendarGoalComposeState extends State<CalendarGoalCompose> {
         ),
       );
     } finally {
-      setState(() {
-        _isSaving = false;
-      });
-      Navigator.of(context).pop();
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+        Navigator.of(context).pop();
+      }
     }
   }
 

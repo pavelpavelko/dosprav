@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:dosprav/models/task.dart';
 import 'package:dosprav/widgets/view_preview.dart';
 
 class CategoriesTableViewPreview extends StatelessWidget {
@@ -15,33 +14,33 @@ class CategoriesTableViewPreview extends StatelessWidget {
 
   late final ColorScheme themeColorScheme;
 
-  List<Task> _getTutorialTasks() {
-    var result = [
-      Task(
-        name: "Pass the tutorial",
-        description: "",
-        categoryId: "",
-        timestampCreated: DateTime.now(),
-        dueDate: DateTime.now(),
-        intervalDuration: Duration(days: 0),
-        priorityOrder: 1,
-      ),
-      Task(
-        name: "Daily Workouts",
-        description: "",
-        categoryId: "",
-        timestampCreated: DateTime.now(),
-        dueDate: DateTime.now(),
-        intervalDuration: Duration(days: 1),
-        priorityOrder: 0,
-      ),
-    ];
-    result.sort();
-    return result;
-  }
+  // List<Task> _getTutorialTasks() {
+  //   var result = [
+  //     Task(
+  //       name: "Pass the tutorial",
+  //       description: "",
+  //       categoryId: "",
+  //       timestampCreated: DateTime.now(),
+  //       dueDate: DateTime.now(),
+  //       intervalDuration: Duration(days: 0),
+  //       priorityOrder: 1,
+  //     ),
+  //     Task(
+  //       name: "Daily Workouts",
+  //       description: "",
+  //       categoryId: "",
+  //       timestampCreated: DateTime.now(),
+  //       dueDate: DateTime.now(),
+  //       intervalDuration: Duration(days: 1),
+  //       priorityOrder: 0,
+  //     ),
+  //   ];
+  //   result.sort();
+  //   return result;
+  // }
 
   List<Widget> _getPages() {
-    var tasks = _getTutorialTasks();
+//    var tasks = _getTutorialTasks();
 
     List<Widget> pages = [
       _createMainDescriptionPage(),

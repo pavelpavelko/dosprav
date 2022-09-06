@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 
@@ -45,7 +46,7 @@ class TasksProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -78,7 +79,7 @@ class TasksProvider with ChangeNotifier {
       ));
       notifyListeners();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -97,7 +98,7 @@ class TasksProvider with ChangeNotifier {
       _items.removeAt(indexToRemove);
       notifyListeners();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -137,7 +138,7 @@ class TasksProvider with ChangeNotifier {
         throw "Trying to edit unexisting task";
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -185,7 +186,7 @@ class TasksProvider with ChangeNotifier {
       }
       notifyListeners();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }

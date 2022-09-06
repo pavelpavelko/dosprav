@@ -19,7 +19,7 @@ class CalendarView extends StatefulWidget {
   final bool isShortMode;
 
   @override
-  _CalendarViewState createState() => _CalendarViewState();
+  State<CalendarView> createState() => _CalendarViewState();
 }
 
 class _CalendarViewState extends State<CalendarView> {
@@ -38,35 +38,29 @@ class _CalendarViewState extends State<CalendarView> {
       setState(() {
         _isLoading = true;
       });
-      if (mounted) {
-        await Provider.of<CategoriesProvider>(context, listen: false)
-            .fetchCategories();
-      }
+      await Provider.of<CategoriesProvider>(context, listen: false)
+          .fetchCategories();
       if (mounted) {
         await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
       }
-
       if (mounted) {
         await Provider.of<CalendarGoalsProvider>(context, listen: false)
             .fetchCalendarGoals();
       }
-
       if (mounted) {
         await Provider.of<CalendarGoalTracksProvider>(context, listen: false)
             .fetchCalendarGoalTracks();
       }
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Cannot download calendar goals. Please try again later.",
-              textAlign: TextAlign.center,
-            ),
-            backgroundColor: Theme.of(context).errorColor,
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Cannot download calendar goals. Please try again later.",
+            textAlign: TextAlign.center,
           ),
-        );
-      }
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {

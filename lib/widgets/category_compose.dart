@@ -11,7 +11,7 @@ class CategoryCompose extends StatefulWidget {
   final String? categoryId;
 
   @override
-  _CategoryComposeState createState() => _CategoryComposeState();
+  State<CategoryCompose> createState() => _CategoryComposeState();
 }
 
 class _CategoryComposeState extends State<CategoryCompose> {
@@ -72,7 +72,7 @@ class _CategoryComposeState extends State<CategoryCompose> {
           ),
         );
       }
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -83,10 +83,12 @@ class _CategoryComposeState extends State<CategoryCompose> {
         ),
       );
     } finally {
-      setState(() {
-        _isSaving = false;
-      });
-      Navigator.of(context).pop();
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+        Navigator.of(context).pop();
+      }
     }
   }
 

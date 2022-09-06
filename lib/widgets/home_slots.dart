@@ -15,7 +15,7 @@ class HomeSlots extends StatefulWidget {
   const HomeSlots({Key? key}) : super(key: key);
 
   @override
-  _HomeSlotsState createState() => _HomeSlotsState();
+  State<HomeSlots> createState() => _HomeSlotsState();
 }
 
 class _HomeSlotsState extends State<HomeSlots> {
@@ -40,7 +40,7 @@ class _HomeSlotsState extends State<HomeSlots> {
         await Provider.of<HomeSlotsProvider>(context, listen: false)
             .fetchHomeSlots();
       }
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

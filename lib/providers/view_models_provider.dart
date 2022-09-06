@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,7 +77,7 @@ class ViewModelsProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -103,7 +104,7 @@ class ViewModelsProvider with ChangeNotifier {
         throw "Server-side error. Error code: ${response.statusCode}";
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       _items[index] = oldViewModel;
       notifyListeners();
       rethrow;

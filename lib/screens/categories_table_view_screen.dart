@@ -70,7 +70,6 @@ class CategoriesTableViewScreen extends StatelessWidget {
                       ),
                     );
                   });
-                  ;
                   Navigator.of(context).pop();
                   break;
                 case "Create":

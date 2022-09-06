@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,10 +10,10 @@ class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
 
   @override
-  AuthScreenState createState() => AuthScreenState();
+  State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends State<AuthScreen> {
   var _isLoading = false;
 
   void _submitAuthForm(
@@ -38,7 +39,9 @@ class AuthScreenState extends State<AuthScreen> {
 
         await userCredential.user?.updateDisplayName(username);
       }
-    } on FirebaseAuthException catch (error) {
+    } on FirebaseAuthException catch (error, stackTrace) {
+      dev.log(error.toString(), stackTrace: stackTrace);
+
       String errorMessage;
       switch (error.code) {
         case "ERROR_EMAIL_ALREADY_IN_USE":

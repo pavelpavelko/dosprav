@@ -1,5 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer' as dev;
+
 import 'package:flutter/material.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AccountNameCompose extends StatefulWidget {
   const AccountNameCompose({Key? key, required this.userName})
@@ -8,7 +11,7 @@ class AccountNameCompose extends StatefulWidget {
   final String userName;
 
   @override
-  _AccountNameComposeState createState() => _AccountNameComposeState();
+  State<AccountNameCompose> createState() => _AccountNameComposeState();
 }
 
 class _AccountNameComposeState extends State<AccountNameCompose> {
@@ -51,7 +54,9 @@ class _AccountNameComposeState extends State<AccountNameCompose> {
       });
       await FirebaseAuth.instance.currentUser
           ?.updateDisplayName(_accountUserName);
-    } catch (error) {
+    } catch (error, stackTrace) {
+      dev.log(error.toString(), stackTrace: stackTrace);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -62,10 +67,12 @@ class _AccountNameComposeState extends State<AccountNameCompose> {
         ),
       );
     } finally {
-      setState(() {
-        _isSaving = false;
-      });
-      Navigator.of(context).pop();
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+        Navigator.of(context).pop();
+      }
     }
   }
 

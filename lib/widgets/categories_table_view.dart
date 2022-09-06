@@ -23,7 +23,7 @@ class CategoriesTableView extends StatefulWidget {
   final bool isShortMode;
 
   @override
-  _CategoriesTableViewState createState() => _CategoriesTableViewState();
+  State<CategoriesTableView> createState() => _CategoriesTableViewState();
 }
 
 class _CategoriesTableViewState extends State<CategoriesTableView> {
@@ -51,14 +51,12 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
       setState(() {
         _isLoading = true;
       });
-      if (mounted) {
-        await Provider.of<CategoriesProvider>(context, listen: false)
-            .fetchCategories();
-      }
+      await Provider.of<CategoriesProvider>(context, listen: false)
+          .fetchCategories();
       if (mounted) {
         await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
       }
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -84,7 +82,7 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
       }
       await Provider.of<CategoriesProvider>(context, listen: false)
           .updateOrderIndex(oldIndex, newIndex);
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -230,8 +228,7 @@ class _CategoriesTableViewState extends State<CategoriesTableView> {
 
   @override
   Widget build(BuildContext context) {
-    var categoriesProvider =
-        Provider.of<CategoriesProvider>(context, listen: true);
+    Provider.of<CategoriesProvider>(context, listen: true);
 
     var topPanelContainerSize = widget.isShortMode ? 28.0 : 35.0;
     var topPanelIzonSize = widget.isShortMode ? 20.0 : 25.0;

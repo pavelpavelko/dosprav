@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,7 +61,7 @@ class HomeSlotsProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -71,7 +72,7 @@ class HomeSlotsProvider with ChangeNotifier {
       await updateHomeSlots();
       notifyListeners();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -101,7 +102,7 @@ class HomeSlotsProvider with ChangeNotifier {
         throw "Server-side error. Error code: ${response.statusCode}";
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }

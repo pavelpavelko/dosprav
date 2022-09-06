@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dosprav/widgets/task_compose.dart';
 
 class TaskComposeScreen extends StatefulWidget {
-  TaskComposeScreen({Key? key}) : super(key: key);
+  const TaskComposeScreen({Key? key}) : super(key: key);
 
   static const String routeName = "/task-compose";
 

@@ -17,7 +17,7 @@ class CategoryListView extends StatefulWidget {
   final bool isShortMode;
 
   @override
-  _CategoryListViewState createState() => _CategoryListViewState();
+  State<CategoryListView> createState() => _CategoryListViewState();
 }
 
 class _CategoryListViewState extends State<CategoryListView> {
@@ -40,10 +40,8 @@ class _CategoryListViewState extends State<CategoryListView> {
           .fetchCategories();
       if (mounted) {
         await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
-      } else {
-        throw "Not mounted";
-      }
-    } catch (error) {
+      } 
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

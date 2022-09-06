@@ -29,7 +29,7 @@ class DailyView extends StatefulWidget {
   final bool isShortMode;
 
   @override
-  _DailyViewState createState() => _DailyViewState();
+  State<DailyView> createState() => _DailyViewState();
 }
 
 class _DailyViewState extends State<DailyView> {
@@ -56,14 +56,12 @@ class _DailyViewState extends State<DailyView> {
       setState(() {
         _isLoading = true;
       });
-      if (mounted) {
-        await Provider.of<CategoriesProvider>(context, listen: false)
-            .fetchCategories();
-      }
+      await Provider.of<CategoriesProvider>(context, listen: false)
+          .fetchCategories();
       if (mounted) {
         await Provider.of<TasksProvider>(context, listen: false).fetchTasks();
       }
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

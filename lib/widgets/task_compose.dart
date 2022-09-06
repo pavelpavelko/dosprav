@@ -112,7 +112,7 @@ class TaskComposeState extends State<TaskCompose> {
         );
         await _tasksProvider!.addTask(newTask);
       }
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -51,7 +52,7 @@ class CalendarGoalsProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -82,7 +83,7 @@ class CalendarGoalsProvider with ChangeNotifier {
       );
       notifyListeners();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -117,7 +118,7 @@ class CalendarGoalsProvider with ChangeNotifier {
         throw "Trying to edit unexisting calendar goal.";
       }
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -137,7 +138,7 @@ class CalendarGoalsProvider with ChangeNotifier {
       _items.removeAt(indexToRemove);
       notifyListeners();
     } catch (error, stackTrace) {
-      print("${error.toString()}\n${stackTrace.toString()}");
+      dev.log(error.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }

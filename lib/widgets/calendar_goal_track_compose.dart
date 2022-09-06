@@ -18,7 +18,7 @@ class CalendarGoalTrackCompose extends StatefulWidget {
   final DateTime trackDate;
 
   @override
-  _CalendarGoalTrackComposeState createState() =>
+  State<CalendarGoalTrackCompose> createState() =>
       _CalendarGoalTrackComposeState();
 }
 
@@ -150,7 +150,7 @@ class _CalendarGoalTrackComposeState extends State<CalendarGoalTrackCompose> {
         );
         await _tracksProvider.addGoalTrack(newTrack);
       }
-    } catch (error) {
+    } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -161,10 +161,12 @@ class _CalendarGoalTrackComposeState extends State<CalendarGoalTrackCompose> {
         ),
       );
     } finally {
-      setState(() {
-        _isSaving = false;
-      });
-      Navigator.of(context).pop();
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+        Navigator.of(context).pop();
+      }
     }
   }
 
