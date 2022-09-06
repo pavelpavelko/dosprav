@@ -48,23 +48,7 @@ class CalendarGoalItem extends StatelessWidget {
         }
       }
     }
-    if (goal.rule.type == GoalType.desire) {
-      if (occurrenceNumber >= goal.rule.numDaysForGreen) {
-        return Colors.green;
-      } else if(occurrenceNumber >= goal.rule.numDaysForYellow){
-        return Colors.yellow;
-      } else {
-        return Colors.red;
-      }
-    } else {
-      if (occurrenceNumber <= daysToCheck - goal.rule.numDaysForGreen) {
-        return Colors.green;
-      } else if(occurrenceNumber <= daysToCheck - goal.rule.numDaysForYellow){
-        return Colors.yellow;
-      } else {
-        return Colors.red;
-      }
-    }
+    return TaskHelper.getColorByGoalRule(goal.rule, occurrenceNumber);
   }
 
   @override

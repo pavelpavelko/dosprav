@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
+
+import 'package:dosprav/models/calendar_goal_rule.dart';
+import 'package:dosprav/providers/calendar_goals_provider.dart';
 
 class TaskHelper {
   static String formatDueDate(DateTime date) {
@@ -19,6 +23,27 @@ class TaskHelper {
     }
 
     return cuttedFirst.isBefore(cuttedSecond) ? -1 : 1;
+  }
+
+  static Color getColorByGoalRule(CalendarGoalRule rule, int occurrenceNumber){
+    var daysToCheck = CalendarGoalsProvider.goalAssessmentDuration.inDays;
+    if (rule.type == GoalType.desire) {
+      if (occurrenceNumber >= rule.numDaysForGreen) {
+        return Colors.green;
+      } else if(occurrenceNumber >= rule.numDaysForYellow){
+        return Colors.yellow;
+      } else {
+        return Colors.red;
+      }
+    } else {
+      if (occurrenceNumber <= daysToCheck - rule.numDaysForGreen) {
+        return Colors.green;
+      } else if(occurrenceNumber <= daysToCheck - rule.numDaysForYellow){
+        return Colors.yellow;
+      } else {
+        return Colors.red;
+      }
+    }
   }
 
   static String getShortName(String name) {
