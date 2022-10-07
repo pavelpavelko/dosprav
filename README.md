@@ -1,16 +1,20 @@
-# dosprav
+## do.sprav Flutter application
 
-A new Flutter project.
+### Description
+**do.sprav** applicaion helps manage tasks and daily routine using various data representations and tracking tools. The app allows creating, prioritizing, and grouping tasks by categories, setting goals and tracking their progress. The app was developed for practice and demonstration purposes.
 
-## Getting Started
+### Tech Stack
+* User management & user metadata: firebase_auth;
+* Networking: http
+* State management: provider;
+* Data storages: main data - Firebase realtime database; local prefs - shared_preferences, image files storage - firebase_storage;
+* UI & helper packages: intl, carousel_slider, smooth_page_indicator, focused_menu, toggle_switch, image_picker;
 
-This project is a starting point for a Flutter application.
+### Target Devices
+The application tested on the following devices only: 
+* Android emulator: Pixel API 30 (5.0 1080x1920 420dpi, Android 11, x86)
+* iPhone 12 Pro (iOS 15)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#### Additional documents
+* Application Informational Architecture board in Miro: https://miro.com/app/board/uXjVOpDw0SE=/?share_link_id=730363766404 
+* Application Feature Breakdown in Google Sheets: https://docs.google.com/spreadsheets/d/1NvQO8xLOall8ATzWpJ9fxGLZ9rSVmeRA6ATvOm6uIaw/edit?usp=sharing
